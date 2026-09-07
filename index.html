@@ -1,65 +1,177 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Mi espacio de aprendizaje</title>
+    <meta charset="UTF-8">
 
-  <link rel="stylesheet" href="estilos.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mi espacio de aprendizaje</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="script.js" defer></script>
+
 </head>
+
+
 <body>
 
-  <main class="inicio">
 
-    <section class="contenido-inicio">
+    <!-- =================================================
+         INTRODUCCIÓN
+    ================================================== -->
 
-      <p class="etiqueta">MI PORTAFOLIO ACADÉMICO</p>
+    <div id="intro" class="intro">
 
-      <h1>
-        Aprender es construir
-        <span>un mejor futuro.</span>
-      </h1>
+        <div class="intro-contenido">
 
-      <div class="frases">
-        <p>
-          «Lo maravilloso de aprender es que nadie puede arrebatártelo».
-        </p>
+            <div class="intro-linea"></div>
 
-        <p>
-          «Cada hora de estudio es una inversión en tu futuro».
-        </p>
-      </div>
+            <p class="intro-frase">
+                «Cada hora de estudio es una inversión en tu futuro».
+            </p>
 
-      <div class="linea-decorativa"></div>
+            <div class="intro-linea"></div>
 
-      <p class="descripcion">
-        Este espacio reúne mi progreso, mis actividades y los conocimientos
-        adquiridos durante mi formación académica.
-      </p>
+        </div>
 
-      <a href="#contenido" class="boton">
-        Explorar mi aprendizaje
-      </a>
+    </div>
 
-    </section>
 
-    <section class="contenedor-logo">
-      <div class="marco-logo">
-        <img src="logo-unsm.png" alt="Logo de la Universidad Nacional de San Martín">
-      </div>
 
-      <p class="texto-logo">
-        Universidad Nacional<br>
-        de San Martín
-      </p>
-    </section>
+    <!-- =================================================
+         SECCIÓN PRINCIPAL
+    ================================================== -->
 
-  </main>
+    <main id="inicio" class="hero">
 
-  <section id="contenido" class="seccion-vacia">
-    <p>Próximamente encontrarás aquí mis semanas de aprendizaje.</p>
-  </section>
+
+        <!-- DECORACIÓN -->
+
+        <div class="decoracion decoracion-1"></div>
+
+        <div class="decoracion decoracion-2"></div>
+
+
+
+        <!-- =================================================
+             CONTENIDO IZQUIERDO
+        ================================================== -->
+
+        <section class="contenido-hero">
+
+
+            <!-- TÍTULO PRINCIPAL -->
+
+            <h1 id="titulo-principal">
+
+                Aprender es construir
+
+                <span>
+                    un mejor futuro.
+                </span>
+
+            </h1>
+
+
+
+            <div class="linea-verde"></div>
+
+
+
+            <!-- FRASE PRINCIPAL -->
+
+            <p class="frase texto-interactivo">
+
+                «Lo maravilloso de aprender es que nadie puede arrebatártelo».
+
+            </p>
+
+
+
+            <!-- FRASE SECUNDARIA -->
+
+            <p class="frase secundaria texto-interactivo">
+
+                «Cada hora de estudio es una inversión en tu futuro».
+
+            </p>
+
+
+
+            <!-- DESCRIPCIÓN -->
+
+            <p class="descripcion texto-interactivo">
+
+                Este portafolio reúne mi progreso, mis actividades y los
+                conocimientos adquiridos durante mi formación académica.
+
+            </p>
+
+
+
+            <!-- BOTÓN -->
+
+            <a href="#seccion-2" class="boton">
+
+                Explorar
+
+            </a>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             LOGO UNSM
+        ================================================== -->
+
+        <section class="contenedor-logo">
+
+
+            <div class="tarjeta-logo">
+
+
+                <div class="marco-logo">
+
+
+                    <img
+                        src="logo-unsm.png.png"
+                        alt="Logo de la Universidad Nacional de San Martín"
+                    >
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <p class="nombre-universidad">
+
+                UNIVERSIDAD NACIONAL<br>
+                DE SAN MARTÍN
+
+            </p>
+
+
+
+            <p class="texto-tecnico">
+
+                JHORLIN A.P
+
+            </p>
+
+
+        </section>
+
+
+    </main>
 
 </body>
+
 </html>
