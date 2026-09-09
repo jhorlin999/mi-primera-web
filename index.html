@@ -5,13 +5,16 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Mi espacio de aprendizaje</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+          href="style.css">
 
-    <script src="script.js" defer></script>
+    <script src="script.js"
+            defer></script>
 
 </head>
 
@@ -19,21 +22,43 @@
 <body>
 
 
-    <!-- =================================================
+    <!-- =====================================================
          INTRODUCCIÓN
-    ================================================== -->
+    ====================================================== -->
 
-    <div id="intro" class="intro">
+    <div class="intro"
+         id="intro">
 
         <div class="intro-contenido">
 
-            <div class="intro-linea"></div>
+            <h2 class="intro-bienvenido">
 
-            <p class="intro-frase">
-                «Cada hora de estudio es una inversión en tu futuro»
+                <span>B</span>
+                <span>I</span>
+                <span>E</span>
+                <span>N</span>
+                <span>V</span>
+                <span>E</span>
+                <span>N</span>
+                <span>I</span>
+                <span>D</span>
+                <span>O</span>
+
+            </h2>
+
+
+            <div class="intro-carga">
+
+                <div class="intro-carga-barra"></div>
+
+            </div>
+
+
+            <p class="intro-nombre">
+
+                JHORLIN A.P.
+
             </p>
-
-            <div class="intro-linea"></div>
 
         </div>
 
@@ -41,14 +66,191 @@
 
 
 
-    <!-- =================================================
-         SECCIÓN PRINCIPAL
-    ================================================== -->
+    <!-- =====================================================
+         TRANSICIÓN FUTURISTA
+    ====================================================== -->
 
-    <main id="inicio" class="hero">
+    <div class="transicion-overlay"
+         id="transicion-overlay">
+
+        <div class="transicion-linea"></div>
+
+    </div>
 
 
-        <!-- DECORACIÓN -->
+
+    <!-- =====================================================
+         PRIMERA SECCIÓN
+    ====================================================== -->
+
+    <main id="inicio"
+          class="hero">
+
+
+        <!-- =================================================
+             FONDO DE LÍNEAS
+        ================================================== -->
+
+        <svg class="fondo-flujo"
+             viewBox="0 0 1200 800"
+             preserveAspectRatio="none"
+             xmlns="http://www.w3.org/2000/svg">
+
+            <defs>
+
+                <linearGradient id="lineaVerde1"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="0%">
+
+                    <stop offset="0%"
+                          stop-color="#00a84f"
+                          stop-opacity="0">
+                    </stop>
+
+                    <stop offset="50%"
+                          stop-color="#00e676"
+                          stop-opacity="0.9">
+                    </stop>
+
+                    <stop offset="100%"
+                          stop-color="#00a84f"
+                          stop-opacity="0">
+                    </stop>
+
+                </linearGradient>
+
+
+                <linearGradient id="lineaVerde2"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="0%">
+
+                    <stop offset="0%"
+                          stop-color="#007a35"
+                          stop-opacity="0">
+                    </stop>
+
+                    <stop offset="50%"
+                          stop-color="#00c264"
+                          stop-opacity="0.7">
+                    </stop>
+
+                    <stop offset="100%"
+                          stop-color="#007a35"
+                          stop-opacity="0">
+                    </stop>
+
+                </linearGradient>
+
+
+                <filter id="brilloLinea"
+                        x="-50%"
+                        y="-50%"
+                        width="200%"
+                        height="200%">
+
+                    <feGaussianBlur
+                        stdDeviation="2.5"
+                        result="blur">
+                    </feGaussianBlur>
+
+                    <feMerge>
+
+                        <feMergeNode in="blur"></feMergeNode>
+
+                        <feMergeNode in="SourceGraphic"></feMergeNode>
+
+                    </feMerge>
+
+                </filter>
+
+            </defs>
+
+
+            <path class="linea-flujo linea-a"
+                  d="M -100,620
+                     C 250,600
+                     420,520
+                     600,480
+                     C 780,440
+                     950,380
+                     1300,300"
+                  stroke="url(#lineaVerde1)"
+                  stroke-width="2.5"
+                  fill="none"
+                  filter="url(#brilloLinea)">
+            </path>
+
+
+            <path class="linea-flujo linea-b"
+                  d="M -100,680
+                     C 220,660
+                     400,590
+                     580,540
+                     C 760,490
+                     940,420
+                     1300,340"
+                  stroke="url(#lineaVerde2)"
+                  stroke-width="2"
+                  fill="none"
+                  filter="url(#brilloLinea)">
+            </path>
+
+
+            <path class="linea-flujo linea-c"
+                  d="M -100,720
+                     C 260,710
+                     430,650
+                     610,600
+                     C 790,550
+                     960,470
+                     1300,380"
+                  stroke="url(#lineaVerde1)"
+                  stroke-width="1.5"
+                  fill="none"
+                  filter="url(#brilloLinea)">
+            </path>
+
+
+            <path class="linea-flujo linea-d"
+                  d="M -100,560
+                     C 230,545
+                     410,470
+                     590,430
+                     C 770,390
+                     950,340
+                     1300,270"
+                  stroke="url(#lineaVerde2)"
+                  stroke-width="1.5"
+                  fill="none"
+                  filter="url(#brilloLinea)">
+            </path>
+
+
+            <path class="linea-flujo linea-e"
+                  d="M -100,760
+                     C 270,750
+                     440,700
+                     620,650
+                     C 800,600
+                     970,510
+                     1300,410"
+                  stroke="url(#lineaVerde1)"
+                  stroke-width="1"
+                  fill="none"
+                  filter="url(#brilloLinea)">
+            </path>
+
+        </svg>
+
+
+
+        <!-- =================================================
+             DECORACIÓN
+        ================================================== -->
 
         <div class="decoracion decoracion-1"></div>
 
@@ -57,58 +259,56 @@
 
 
         <!-- =================================================
-             CONTENIDO IZQUIERDO
+             CONTENIDO
         ================================================== -->
 
         <section class="contenido-hero">
 
-
-
-            <!-- TÍTULO PRINCIPAL -->
 
             <h1 id="titulo-principal">
 
                 Aprender es construir
 
                 <span>
+
                     un mejor futuro.
+
                 </span>
 
             </h1>
 
 
-
             <div class="linea-verde"></div>
 
 
-
-            <!-- FRASE PRINCIPAL -->
-
             <p class="frase texto-interactivo">
 
-            Lo maravilloso de aprender es que nadie puede arrebatártelo.
+                Lo maravilloso de aprender es que nadie puede
+                arrebatártelo.
 
             </p>
 
-            <!-- DESCRIPCIÓN -->
 
             <p class="descripcion texto-interactivo">
 
-                Este portafolio reúne mi progreso, mis actividades y los
-                conocimientos adquiridos durante mi formación académica.
+                Este portafolio reúne mi progreso, mis actividades
+                y los conocimientos adquiridos durante mi formación
+                académica.
 
             </p>
 
 
+            <!-- =================================================
+                 ÚNICO ACCESO A LA SEGUNDA SECCIÓN
+            ================================================== -->
 
-            <!-- BOTÓN -->
-
-            <a href="#seccion-2" class="boton">
+            <a href="#seccion-2"
+               class="boton"
+               id="boton-explorar">
 
                 Explorar
 
             </a>
-
 
         </section>
 
@@ -121,23 +321,23 @@
         <section class="contenedor-logo">
 
 
-            <div class="tarjeta-logo">
+            <div class="cordon-logo"></div>
 
 
-                <div class="marco-logo">
+            <div class="pivote-logo">
 
+                <div class="tarjeta-logo">
 
-                    <img
-                        src="logo-unsm.png.png"
-                        alt="Logo de la Universidad Nacional de San Martín"
-                    >
+                    <div class="marco-logo">
 
+                        <img src="logo-unsm.png"
+                             alt="Logo de la Universidad Nacional de San Martín">
+
+                    </div>
 
                 </div>
 
-
             </div>
-
 
 
             <p class="nombre-universidad">
@@ -148,19 +348,276 @@
             </p>
 
 
-
             <p class="texto-tecnico">
 
                 JHORLIN A.P
 
             </p>
 
-
         </section>
-
 
     </main>
 
-</body>
 
+
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Espacio de Aprendizaje - Morado Neon</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Iconos de Lucide/FontAwesome para los elementos -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <!-- Fondo de partículas/luces animadas -->
+    <div class="background-glow"></div>
+    
+<div class="app-container" id="seccion-2">
+        <!-- BARRA DE NAVEGACIÓN LATERAL (NAVBAR) -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i data-lucide="orbit" class="brand-icon"></i>
+                <h2>J.H.A.P</h2>
+            </div>
+
+            <nav class="nav-menu">
+
+    <!-- Inicio del portafolio -->
+    <a href="#" class="nav-item active">
+        <i data-lucide="layout-dashboard"></i>
+        <span>Inicio</span>
+    </a>
+
+    <!-- Sección de proyectos -->
+<a href="#proyectos" class="nav-item" id="enlace-proyectos">
+    <i data-lucide="folder-kanban"></i>
+    <span>Proyectos</span>
+</a>
+
+    <!-- Sección de galería -->
+    <a href="#" class="nav-item">
+        <i data-lucide="image"></i>
+        <span>Galería</span>
+    </a>
+
+    <!-- Sección de cursos -->
+    <a href="#" class="nav-item">
+        <i data-lucide="book-open"></i>
+        <span>Cursos</span>
+    </a>
+
+    <!-- Sección de logros -->
+    <a href="#" class="nav-item">
+        <i data-lucide="trophy"></i>
+        <span>Logros</span>
+    </a>
+
+    <!-- Sección sobre el estudiante -->
+    <a href="#" class="nav-item">
+        <i data-lucide="user"></i>
+        <span>Sobre mí</span>
+    </a>
+
+</nav>
+        </aside>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="main-content">
+            <!-- BARRA SUPERIOR -->
+            <header class="top-header">
+                <div class="search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+
+                <div class="header-actions">
+                    <button class="icon-btn"><i data-lucide="mail"></i></button>
+                    <button class="icon-btn"><i data-lucide="bell"></i></button>
+                    <div class="user-profile">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Usuario">
+                    </div>
+                </div>
+            </header>
+
+            <!-- TÍTULO DE SECCIÓN -->
+            <div class="dashboard-header">
+                <div class="header-text">
+                    <h1>JHORLIN HEINER 
+                        ALFARO PERALTA</h1>
+                    <p>Bienvenido a mi blog</p>
+                </div>
+                <button class="btn-primary">
+                    <i data-lucide="plus"></i> NEW PROYECT
+                </button>
+            </div>
+<!-- =================================================
+     SECCIÓN DE PROYECTOS
+================================================== -->
+
+<section class="seccion-proyectos" id="proyectos">
+
+    <div class="proyectos-titulo">
+
+        <div>
+            <h2>Mis Proyectos</h2>
+
+            <p>
+                Trabajos y proyectos realizados durante mi formación académica.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- Proyecto UNO PRESENT -->
+
+    <div class="proyecto-card">
+
+        <div class="proyecto-icono">
+
+            <i data-lucide="file-text"></i>
+
+        </div>
+
+
+        <div class="proyecto-info">
+
+            <h3>PRESENTACION </h3>
+
+            <p>
+                SEMANA "3"
+            </p>
+
+            <span class="proyecto-tipo">
+                PDF
+            </span>
+
+        </div>
+
+
+        <div class="proyecto-acciones">
+
+            <a href="archivos/proyectos/uno-present.pdf"
+               target="_blank"
+               class="proyecto-boton">
+
+                <i data-lucide="eye"></i>
+
+                Ver PDF
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+<!-- =================================================
+     otro proyectoooooooooooooooooooooooo, copias todo lo mismo
+     y pegas aqui.
+================================================== -->
+
+
+
+    <!-- Vista previa del PDF -->
+
+    <div class="proyecto-vista">
+
+        <div class="vista-header">
+
+            <h3>Vista previa</h3>
+
+            <span>UNO PRESENT</span>
+
+        </div>
+
+
+        <iframe
+            src="archivos/proyectos/uno-present.pdf"
+            title="Vista previa de UNO PRESENT">
+        </iframe>
+
+    </div>
+
+</section>
+            <!-- GRID DE TARJETAS Y CONTENIDO -->
+            <div class="dashboard-grid">
+
+                
+                <!-- Tarjeta Principal (Hero/Preview) -->
+
+<div class="card card-hero">
+    <div class="glow-effect"></div>
+
+    <div class="card-hero-content">
+
+        <h3></h3>
+
+        <div class="interactive-box">
+
+            <div class="pulsing-circle">
+
+                <img
+                    src="fisi.png"
+                    alt="Escudo FISI"
+                    class="logo-fisi"
+                >
+
+                <!-- Rayos -->
+                <div class="lightning lightning-left"></div>
+                <div class="lightning lightning-right"></div>
+
+                <div class="lightning lightning-left lightning-small"></div>
+                <div class="lightning lightning-right lightning-small"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+                <!-- Tarjeta de Estadísticas -->
+                <div class="card card-stats">
+                    <h3>Estadísticas</h3>
+                    <div class="stat-number">32,358</div>
+                    <div class="wave-chart">
+                        <div class="bar bar-1"></div>
+                        <div class="bar bar-2"></div>
+                        <div class="bar bar-3"></div>
+                        <div class="bar bar-4"></div>
+                        <div class="bar bar-5"></div>
+                    </div>
+                </div>
+
+                
+                <!-- Tarjeta Cronograma / Actividad -->
+                <div class="card card-timeline">
+                    <h3>Línea de Tiempo del Proyecto</h3>
+                    <div class="progress-bar-container">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Chat Interactivo -->
+                <div class="card card-chat">
+                    <h3>Chat en Vivo</h3>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message msg-received">¡Hola! ¿Cómo va el proyecto?</div>
+                        <div class="message msg-sent">¡El diseño morado animado quedó genial!</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
+                        <button id="sendBtn"><i data-lucide="send"></i></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
 </html>
