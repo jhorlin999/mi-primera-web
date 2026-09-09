@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             intro.classList.add("ocultar");
         }
 
-    }, 3500);
+    }, 1000);
 
 
     /* =================================================
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             contenido.classList.add("mostrar");
         }
 
-    }, 4000);
+    }, 1200);
 
 
     /* =================================================
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
             logo.classList.add("mostrar");
         }
 
-    }, 4300);
+    }, 1300);
 
 
     /* =================================================
@@ -2451,3 +2451,448 @@ document.addEventListener(
 
     }
 );
+
+
+/* =====================================================
+   SISTEMA AUTOMÁTICO DE SEMANAS
+   SEMANA 3 HASTA SEMANA 15
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const contenedorSemanas =
+        document.getElementById("contenedor-semanas");
+
+    const botonMostrarMas =
+        document.getElementById("mostrar-mas-semanas");
+
+    const listaSemanas =
+        document.getElementById("lista-semanas");
+
+    const vistaSemana =
+        document.getElementById("vista-semana");
+
+    const trabajosSemana =
+        document.getElementById("trabajos-semana");
+
+    const tituloSemana =
+        document.getElementById("titulo-semana");
+
+    const descripcionSemana =
+        document.getElementById("descripcion-semana");
+
+    const botonRegresar =
+        document.getElementById("regresar-semanas");
+
+
+    /* =================================================
+       CONFIGURACIÓN
+    ================================================= */
+
+    const semanaInicial = 3;
+
+    const semanaFinal = 15;
+
+    let semanasMostradas = 3;
+
+
+    /* =================================================
+       AQUÍ PUEDES AGREGAR TUS TRABAJOS
+       
+       Ejemplo:
+       
+       semana 3:
+       - Presentación
+       - Informe
+       - PDF
+       
+       Si una semana no tiene trabajos todavía,
+       aparecerá como "Sin trabajos agregados".
+    ================================================= */
+
+    const trabajos = {
+
+        3: [
+            {
+                nombre: "PRESENTACION",
+                descripcion: "Trabajo realizado durante la semana 3.",
+                tipo: "PDF",
+                archivo: "archivos/proyectos/uno-present.pdf"
+            }, 
+ {
+                nombre: "TRABAJO SOBRE LA PERCEPCION",
+                descripcion: "Trabajo realizado durante la semana 3.",
+                tipo: "PDF",
+                archivo: "archivos/proyectos/COMEDORTGS.pdf"
+            }, 
+            {
+                nombre: "SUBSISTEMAS",
+                descripcion: "Trabajo realizado durante la semana 3.",
+                tipo: "PDF",
+                archivo: "archivos/proyectos/subsistemastgs.pdf"
+            }, 
+
+
+
+
+        ],
+
+        4: [],
+
+        5: [],
+
+        6: [],
+
+        7: [],
+
+        8: [],
+
+        9: [],
+
+        10: [],
+
+        11: [],
+
+        12: [],
+
+        13: [],
+
+        14: [],
+
+        15: []
+
+    };
+
+
+    /* =================================================
+       CREAR TARJETA DE SEMANA
+    ================================================= */
+
+    function crearSemana(numeroSemana) {
+
+        const tarjeta = document.createElement("div");
+
+        tarjeta.className =
+            "tarjeta-semana tarjeta-semana-entrada";
+
+
+        tarjeta.innerHTML = `
+
+            <div class="semana-numero">
+
+                SEM ${numeroSemana}
+
+            </div>
+
+
+            <div class="semana-info">
+
+                <h3>
+                    Semana ${numeroSemana}
+                </h3>
+
+                <p>
+                    Ver todos los trabajos de esta semana.
+                </p>
+
+            </div>
+
+
+            <div class="semana-flecha">
+
+                <i data-lucide="chevron-right"></i>
+
+            </div>
+
+        `;
+
+
+        /* =================================================
+           CLICK EN LA SEMANA
+        ================================================= */
+
+        tarjeta.addEventListener("click", () => {
+
+            abrirSemana(numeroSemana);
+
+        });
+
+
+        contenedorSemanas.appendChild(tarjeta);
+
+
+        /* Activar iconos Lucide */
+
+        if (typeof lucide !== "undefined") {
+
+            lucide.createIcons();
+
+        }
+
+    }
+
+
+    /* =================================================
+       MOSTRAR LAS PRIMERAS SEMANAS
+    ================================================= */
+
+    function cargarSemanasIniciales() {
+
+        contenedorSemanas.innerHTML = "";
+
+        for (
+            let i = semanaInicial;
+            i <= semanasMostradas;
+            i++
+        ) {
+
+            crearSemana(i);
+
+        }
+
+    }
+
+
+    /* =================================================
+       BOTÓN MOSTRAR MÁS
+       
+       Cada clic agrega 3 semanas.
+    ================================================= */
+
+    botonMostrarMas.addEventListener("click", () => {
+
+        const siguienteLimite =
+            Math.min(
+                semanasMostradas + 3,
+                semanaFinal
+            );
+
+
+        for (
+            let i = semanasMostradas + 1;
+            i <= siguienteLimite;
+            i++
+        ) {
+
+            crearSemana(i);
+
+        }
+
+
+        semanasMostradas = siguienteLimite;
+
+
+        /* =================================================
+           SI YA LLEGÓ A LA SEMANA 15
+        ================================================= */
+
+        if (semanasMostradas >= semanaFinal) {
+
+            botonMostrarMas.style.display = "none";
+
+        }
+
+    });
+
+
+    /* =================================================
+       ABRIR UNA SEMANA
+    ================================================= */
+
+    function abrirSemana(numeroSemana) {
+
+        const listaTrabajos =
+            trabajos[numeroSemana] || [];
+
+
+        /* Cambiar título */
+
+        tituloSemana.textContent =
+            `Semana ${numeroSemana}`;
+
+
+        descripcionSemana.textContent =
+            `Trabajos realizados durante la semana ${numeroSemana}.`;
+
+
+        /* Limpiar trabajos anteriores */
+
+        trabajosSemana.innerHTML = "";
+
+
+        /* =================================================
+           SI NO HAY TRABAJOS
+        ================================================= */
+
+        if (listaTrabajos.length === 0) {
+
+            const sinTrabajos =
+                document.createElement("div");
+
+
+            sinTrabajos.className =
+                "proyecto-card trabajo-semana-entrada";
+
+
+            sinTrabajos.innerHTML = `
+
+                <div class="proyecto-icono">
+
+                    <i data-lucide="folder-open"></i>
+
+                </div>
+
+
+                <div class="proyecto-info">
+
+                    <h3>
+                        Sin trabajos agregados
+                    </h3>
+
+                    <p>
+                        Todavía no has agregado trabajos
+                        para esta semana.
+                    </p>
+
+                </div>
+
+            `;
+
+
+            trabajosSemana.appendChild(sinTrabajos);
+
+        }
+
+
+        /* =================================================
+           MOSTRAR TODOS LOS TRABAJOS
+        ================================================= */
+
+        listaTrabajos.forEach((trabajo) => {
+
+            const tarjetaTrabajo =
+                document.createElement("div");
+
+
+            tarjetaTrabajo.className =
+                "proyecto-card trabajo-semana-entrada";
+
+
+            tarjetaTrabajo.innerHTML = `
+
+                <div class="proyecto-icono">
+
+                    <i data-lucide="file-text"></i>
+
+                </div>
+
+
+                <div class="proyecto-info">
+
+                    <h3>
+                        ${trabajo.nombre}
+                    </h3>
+
+                    <p>
+                        ${trabajo.descripcion}
+                    </p>
+
+                    <span class="proyecto-tipo">
+                        ${trabajo.tipo}
+                    </span>
+
+                </div>
+
+
+                <div class="proyecto-acciones">
+
+                    <a
+                        href="${trabajo.archivo}"
+                        target="_blank"
+                        class="proyecto-boton">
+
+                        <i data-lucide="eye"></i>
+
+                        Ver ${trabajo.tipo}
+
+                    </a>
+
+                </div>
+
+            `;
+
+
+            trabajosSemana.appendChild(tarjetaTrabajo);
+
+        });
+
+
+        /* Activar iconos */
+
+        if (typeof lucide !== "undefined") {
+
+            lucide.createIcons();
+
+        }
+
+
+        /* =================================================
+           CAMBIAR DE LISTA DE SEMANAS A VISTA
+        ================================================= */
+
+        listaSemanas.style.display = "none";
+
+        vistaSemana.classList.remove(
+            "vista-semana-oculta"
+        );
+
+        vistaSemana.classList.add(
+            "vista-semana-activa"
+        );
+
+
+        /* Llevar arriba */
+
+        vistaSemana.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+
+    /* =================================================
+       BOTÓN REGRESAR
+    ================================================= */
+
+    botonRegresar.addEventListener("click", () => {
+
+        vistaSemana.classList.remove(
+            "vista-semana-activa"
+        );
+
+        vistaSemana.classList.add(
+            "vista-semana-oculta"
+        );
+
+
+        listaSemanas.style.display = "block";
+
+
+        listaSemanas.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    });
+
+
+    /* =================================================
+       INICIAR SISTEMA
+    ================================================= */
+
+    cargarSemanasIniciales();
+
+});
+
+

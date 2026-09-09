@@ -175,11 +175,11 @@ body {
     animation: fluirLinea 7s linear infinite;
 }
 
-.linea-a { animation-duration: 6s; }
-.linea-b { animation-duration: 8s; animation-delay: -1.5s; }
-.linea-c { animation-duration: 9.5s; animation-delay: -3s; }
-.linea-d { animation-duration: 7s; animation-delay: -2s; }
-.linea-e { animation-duration: 10s; animation-delay: -4s; }
+.linea-a { animation-duration: 2s; }
+.linea-b { animation-duration: 4s; animation-delay: -1.5s; }
+.linea-c { animation-duration: 8s; animation-delay: -3s; }
+.linea-d { animation-duration: 6s; animation-delay: -2s; }
+.linea-e { animation-duration: 2s; animation-delay: -4s; }
 
 @keyframes fluirLinea {
     0% { stroke-dashoffset: 1120; }
@@ -679,7 +679,7 @@ h1 span {
     margin: 0;
     color: #ffffff;
     font-size: clamp(38px, 7vw, 78px);
-    font-weight: 700;
+    font-weight: 3000;
     letter-spacing: 8px;
     text-transform: uppercase;
 }
@@ -746,7 +746,7 @@ h1 span {
     height: 100%;
     background: #00a84f;
     box-shadow: 0 0 12px rgba(0, 168, 79, 0.7);
-    animation: cargarIntro 2.6s cubic-bezier(0.65, 0, 0.35, 1) 0.30s forwards;
+    animation: cargarIntro 1.0s cubic-bezier(0.65, 0, 0.35, 1) 0.30s forwards;
     position: relative;
 }
 
@@ -869,18 +869,26 @@ h1 span {
 }
 
 /* =====================================================
+
    REDUCIR ANIMACIONES
+
 ===================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+
     *, *::before, *::after {
-        animation-duration: 0.01ms !important;
+        animation-duration: 0.3s !important;
         animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
         scroll-behavior: auto !important;
     }
-    .transicion-overlay { display: none !important; }
+
+    .transicion-overlay {
+        display: none !important;
+    }
 }
+
+
 /* =====================================================
    RESET Y VARIABLES DE COLOR VERDE + MORADO
 ===================================================== */
@@ -1432,15 +1440,7 @@ body {
     .sidebar { width: 80px; padding: 1rem 0.5rem; }
     .sidebar .brand h2, .nav-item span { display: none; }
 }
-/* =====================================================
-   SECCIÓN DE PROYECTOS
-===================================================== */
 
-/* Contenedor principal de la sección de proyectos */
-.seccion-proyectos {
-    display: none;
-    width: 100%;
-}
 /* =====================================================
    RAYAS NEÓN MORADAS DE FONDO
 ===================================================== */
@@ -1505,37 +1505,7 @@ body {
 }
 
 
-/* =====================================================
-   MOVIMIENTO HACIA LA DERECHA
-===================================================== */
 
-@keyframes rayasMoradas {
-
-    0% {
-        transform: translateX(-180px);
-    }
-
-    100% {
-        transform: translateX(180px);
-    }
-
-}
-/* Título de la sección de proyectos */
-.proyectos-titulo {
-    margin-bottom: 1.5rem;
-}
-
-/* Título principal de proyectos */
-.proyectos-titulo h2 {
-    margin: 0;
-    font-size: 2rem;
-}
-
-/* Descripción de proyectos */
-.proyectos-titulo p {
-    margin-top: 0.5rem;
-    opacity: 0.7;
-}
 
 
 /* =====================================================
@@ -2489,3 +2459,323 @@ body {
 
     .chat-messages { max-height: 110px; }
 }
+
+
+/* =====================================================
+   SISTEMA DE SEMANAS - TRABAJOS
+===================================================== */
+
+/* Contenedor de las semanas */
+#contenedor-semanas {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+
+/* =====================================================
+   TARJETA DE SEMANA
+===================================================== */
+
+.tarjeta-semana {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1.4rem;
+    background: rgba(8, 15, 18, 0.92);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    border-radius: 18px;
+    box-shadow: 0 0 25px rgba(53, 232, 117, 0.06);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+
+/* Hover de semana */
+
+.tarjeta-semana:hover {
+    transform: translateX(6px);
+    border-color: rgba(168, 85, 247, 0.75);
+    box-shadow:
+        0 0 20px rgba(168, 85, 247, 0.15),
+        0 0 35px rgba(53, 232, 117, 0.08);
+}
+
+
+/* Número de semana */
+
+.semana-numero {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(168, 85, 247, 0.25),
+            rgba(53, 232, 117, 0.12)
+        );
+
+    border: 1px solid rgba(168, 85, 247, 0.35);
+
+    color: #c9a7ff;
+
+    font-size: 0.85rem;
+    font-weight: 700;
+
+    box-shadow:
+        0 0 15px rgba(168, 85, 247, 0.12);
+}
+
+
+/* Información */
+
+.semana-info {
+    flex: 1;
+}
+
+
+.semana-info h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1.05rem;
+}
+
+
+.semana-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+
+/* Flecha */
+
+.semana-flecha {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    color: #c9a7ff;
+
+    transition: 0.3s ease;
+}
+
+
+.tarjeta-semana:hover .semana-flecha {
+    transform: translateX(5px);
+    color: #49f58a;
+}
+
+
+/* =====================================================
+   MOSTRAR MÁS
+===================================================== */
+
+.mostrar-mas-contenedor {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    margin-top: 1.5rem;
+}
+
+
+#mostrar-mas-semanas {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(168, 85, 247, 0.18),
+            rgba(53, 232, 117, 0.10)
+        );
+
+    border: 1px solid rgba(168, 85, 247, 0.40);
+
+    color: #c9a7ff;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
+}
+
+
+#mostrar-mas-semanas:hover {
+    transform: translateY(-3px);
+
+    color: #ffffff;
+
+    border-color: #a855f7;
+
+    box-shadow:
+        0 0 15px rgba(168, 85, 247, 0.35),
+        0 0 30px rgba(53, 232, 117, 0.10);
+}
+
+
+/* =====================================================
+   VISTA DE UNA SEMANA
+===================================================== */
+
+.vista-semana-oculta {
+    display: none;
+}
+
+
+.vista-semana-activa {
+    display: block;
+}
+
+
+/* =====================================================
+   BOTÓN REGRESAR
+===================================================== */
+
+.boton-regresar {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.5rem;
+
+    padding: 0.7rem 1rem;
+
+    margin-bottom: 1.5rem;
+
+    border-radius: 10px;
+
+    background: rgba(168, 85, 247, 0.10);
+
+    border: 1px solid rgba(168, 85, 247, 0.35);
+
+    color: #c9a7ff;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
+}
+
+
+.boton-regresar:hover {
+    transform: translateX(-4px);
+
+    color: #ffffff;
+
+    border-color: #a855f7;
+
+    box-shadow:
+        0 0 15px rgba(168, 85, 247, 0.30);
+}
+
+
+/* =====================================================
+   TRABAJOS DENTRO DE LA SEMANA
+===================================================== */
+
+#trabajos-semana {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+
+/* =====================================================
+   ANIMACIÓN AL ABRIR UNA SEMANA
+===================================================== */
+
+.tarjeta-semana-entrada {
+    animation: aparecerSemana 0.45s ease forwards;
+}
+
+
+@keyframes aparecerSemana {
+
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =====================================================
+   ANIMACIÓN DE LOS TRABAJOS
+===================================================== */
+
+.trabajo-semana-entrada {
+    animation: aparecerTrabajo 0.4s ease forwards;
+}
+
+
+@keyframes aparecerTrabajo {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .tarjeta-semana {
+
+        padding: 1.1rem;
+
+    }
+
+
+    .semana-numero {
+
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+
+    }
+
+
+    .semana-info h3 {
+
+        font-size: 0.95rem;
+
+    }
+
+
+    .semana-info p {
+
+        font-size: 0.78rem;
+
+    }
+
+}
+
+
+

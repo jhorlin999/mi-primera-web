@@ -395,7 +395,7 @@
     <!-- Sección de proyectos -->
 <a href="#proyectos" class="nav-item" id="enlace-proyectos">
     <i data-lucide="folder-kanban"></i>
-    <span>Proyectos</span>
+    <span>Trabajos</span>
 </a>
 
     <!-- Sección de galería -->
@@ -454,62 +454,58 @@
                     <i data-lucide="plus"></i> NEW PROYECT
                 </button>
             </div>
+
+
 <!-- =================================================
-     SECCIÓN DE PROYECTOS
+     SECCIÓN DE TRABAJOS
 ================================================== -->
 
 <section class="seccion-proyectos" id="proyectos">
 
-    <div class="proyectos-titulo">
+    <!-- =================================================
+         LISTA PRINCIPAL DE SEMANAS
+    ================================================== -->
 
-        <div>
-            <h2>Mis Proyectos</h2>
+    <div id="lista-semanas">
 
-            <p>
-                Trabajos y proyectos realizados durante mi formación académica.
-            </p>
-        </div>
+        <div class="proyectos-titulo">
 
-    </div>
+            <div>
 
+                <h2>Mis Trabajos</h2>
 
-    <!-- Proyecto UNO PRESENT -->
+                <p>
+                    Trabajos y proyectos realizados durante mi formación académica.
+                </p>
 
-    <div class="proyecto-card">
-
-        <div class="proyecto-icono">
-
-            <i data-lucide="file-text"></i>
+            </div>
 
         </div>
 
 
-        <div class="proyecto-info">
+        <!-- =================================================
+             SEMANAS
+             SE GENERAN AUTOMÁTICAMENTE CON JAVASCRIPT
+        ================================================== -->
 
-            <h3>PRESENTACION </h3>
-
-            <p>
-                SEMANA "3"
-            </p>
-
-            <span class="proyecto-tipo">
-                PDF
-            </span>
-
-        </div>
+        <div id="contenedor-semanas"></div>
 
 
-        <div class="proyecto-acciones">
+        <!-- =================================================
+             BOTÓN MOSTRAR MÁS
+        ================================================== -->
 
-            <a href="archivos/proyectos/uno-present.pdf"
-               target="_blank"
-               class="proyecto-boton">
+        <div class="mostrar-mas-contenedor">
 
-                <i data-lucide="eye"></i>
+            <button
+                id="mostrar-mas-semanas"
+                class="proyecto-boton">
 
-                Ver PDF
+                <i data-lucide="chevron-down"></i>
 
-            </a>
+                Mostrar más
+
+            </button>
 
         </div>
 
@@ -517,34 +513,57 @@
 
 
 
-<!-- =================================================
-     otro proyectoooooooooooooooooooooooo, copias todo lo mismo
-     y pegas aqui.
-================================================== -->
+    <!-- =================================================
+         VISTA DE UNA SEMANA
+    ================================================== -->
+
+    <div id="vista-semana"
+         class="vista-semana-oculta">
+
+        <!-- BOTÓN REGRESAR -->
+
+        <button
+            id="regresar-semanas"
+            class="boton-regresar">
+
+            <i data-lucide="arrow-left"></i>
+
+            Regresar
+
+        </button>
 
 
+        <!-- TÍTULO DE LA SEMANA -->
 
-    <!-- Vista previa del PDF -->
+        <div class="proyectos-titulo">
 
-    <div class="proyecto-vista">
+            <div>
 
-        <div class="vista-header">
+                <h2 id="titulo-semana">
+                    Semana 3
+                </h2>
 
-            <h3>Vista previa</h3>
+                <p id="descripcion-semana">
+                    Trabajos realizados durante esta semana.
+                </p>
 
-            <span>UNO PRESENT</span>
+            </div>
 
         </div>
 
 
-        <iframe
-            src="archivos/proyectos/uno-present.pdf"
-            title="Vista previa de UNO PRESENT">
-        </iframe>
+        <!-- =================================================
+             TRABAJOS DE LA SEMANA
+        ================================================== -->
+
+        <div id="trabajos-semana"></div>
 
     </div>
 
 </section>
+
+
+
             <!-- GRID DE TARJETAS Y CONTENIDO -->
             <div class="dashboard-grid">
 
@@ -621,3 +640,4 @@
 
 </body>
 </html>
+
