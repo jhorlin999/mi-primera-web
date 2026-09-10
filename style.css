@@ -2778,4 +2778,11 @@ body {
 }
 
 
+/* Oculta la sección de Trabajos por defecto al cargar la página.
+   Solo se muestra cuando el JS llama a mostrarProyectos() */
+.seccion-proyectos {
+    display: none;
+}
+
+
 
