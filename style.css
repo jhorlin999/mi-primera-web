@@ -20,14 +20,6 @@ body {
 }
 
 /* =====================================================
-   OVERLAY DE TRANSICIÓN FUTURISTA
-===================================================== */
-
-
-
-
-
-/* =====================================================
    BARRA DE NAVEGACIÓN
 ===================================================== */
 
@@ -187,6 +179,16 @@ body {
 }
 
 /* =====================================================
+   PAUSA DE ANIMACIONES CUANDO LA SECCIÓN NO SE VE
+   (evita que sigan consumiendo CPU/batería al pasar
+   a la Sección 2)
+===================================================== */
+
+.hero.seccion-inactiva .linea-flujo {
+    animation-play-state: paused;
+}
+
+/* =====================================================
    CONTENIDO IZQUIERDO
 ===================================================== */
 
@@ -219,9 +221,9 @@ body {
     letter-spacing: 5px;
     text-transform: uppercase;
     transition:
-        transform 0.3s ease,
-        letter-spacing 0.3s ease,
-        text-shadow 0.3s ease;
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        letter-spacing 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        text-shadow 0.35s ease;
 }
 
 .etiqueta:hover {
@@ -264,8 +266,8 @@ h1 {
     position: relative;
     transform: translate3d(0, 0, 0);
     transition:
-        transform 0.16s ease-out,
-        color 0.2s ease;
+        transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+        color 0.25s ease;
     will-change: transform;
     cursor: default;
 }
@@ -296,8 +298,8 @@ h1 span {
     background: #00a84f;
     box-shadow: 0 0 12px rgba(0, 168, 79, 0.5);
     transition:
-        width 0.5s ease,
-        box-shadow 0.5s ease;
+        width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .contenido-hero:hover .linea-verde {
@@ -318,8 +320,8 @@ h1 span {
     font-size: 14px;
     line-height: 1.5;
     transition:
-        transform 0.25s ease,
-        color 0.25s ease;
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        color 0.3s ease;
 }
 
 .frase:hover {
@@ -351,8 +353,8 @@ h1 span {
     font-size: 13px;
     line-height: 1.55;
     transition:
-        transform 0.25s ease,
-        color 0.25s ease;
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        color 0.3s ease;
 }
 
 .descripcion:hover {
@@ -378,9 +380,9 @@ h1 span {
     text-decoration: none;
     text-transform: uppercase;
     transition:
-        transform 0.3s ease,
-        background 0.3s ease,
-        box-shadow 0.3s ease;
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        background 0.35s ease,
+        box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .boton:hover {
@@ -455,7 +457,7 @@ h1 span {
         14px 15px 0 rgba(0, 143, 63, 0.45),
         0 0 50px rgba(0, 143, 63, 0.20);
     animation: logoEntrada 1.2s ease forwards;
-    transition: box-shadow 0.4s ease;
+    transition: box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* =====================================================
@@ -500,7 +502,7 @@ h1 span {
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
     transform: skewX(-20deg);
-    transition: left 0.7s ease;
+    transition: left 0.7s cubic-bezier(0.65, 0, 0.35, 1);
     z-index: 2;
     pointer-events: none;
 }
@@ -552,8 +554,8 @@ h1 span {
     text-align: center;
     text-transform: uppercase;
     transition:
-        transform 0.3s ease,
-        color 0.3s ease;
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        color 0.35s ease;
 }
 
 .nombre-universidad:hover {
@@ -572,8 +574,8 @@ h1 span {
     letter-spacing: 3px;
     text-align: center;
     transition:
-        transform 0.3s ease,
-        color 0.3s ease;
+        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        color 0.35s ease;
 }
 
 .texto-tecnico:hover {
@@ -888,7 +890,6 @@ h1 span {
     }
 }
 
-
 /* =====================================================
    RESET Y VARIABLES DE COLOR VERDE + MORADO
 ===================================================== */
@@ -906,7 +907,7 @@ h1 span {
     --text-white: #f2f2f4;
     --text-muted: #9698aa;
 
-    --transition-fast: 0.25s ease;
+    --transition-fast: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -938,18 +939,17 @@ body {
                 radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.10), transparent 40%),
                 radial-gradient(circle at 50% 50%, rgba(8, 53, 39, 0.32), transparent 60%);
     z-index: -1;
-    animation: pulseAmbient 8s ease-in-out infinite alternate;
-}
-
-@keyframes pulseAmbient {
-    0% { transform: scale(1); opacity: 0.8; }
-    100% { transform: scale(1.05); opacity: 1; }
+    /* Animación quitada por rendimiento: este fondo cubre toda la
+       pantalla y se repintaba cada fotograma sin parar (infinite).
+       Ahora queda fijo (misma apariencia, sin costo de CPU/GPU). */
+    opacity: 0.9;
 }
 
 /* Layout General */
 .app-container {
     display: flex;
     height: 100vh;
+    height: 100dvh;
     min-height: 100vh;
     overflow: hidden;
 }
@@ -978,7 +978,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.8rem;
-    color: #0004f1;
+    color: var(--text-white);
 }
 
 .brand-icon {
@@ -1079,7 +1079,9 @@ body {
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    overflow-y: visible;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
     animation: fadeIn 1s var(--transition-smooth);
 }
 
@@ -1173,7 +1175,7 @@ body {
     font-size: 2rem;
     letter-spacing: 1px;
     background: linear-gradient(90deg, #ffffff, var(--purple-light));
-    -webkit-background-clip: text;
+    -webkit-background-clip: text;   
     -webkit-text-fill-color: transparent;
 }
 
@@ -1447,7 +1449,6 @@ body {
 
 .main-content {
     position: relative;
-    overflow: visible;
     isolation: isolate;
 }
 
@@ -1471,12 +1472,14 @@ body {
 
     filter: blur(0.3px);
 
-    animation: rayasMoradas 18s linear infinite;
+    /* Animación quitada por rendimiento: este elemento mide 3 veces
+       la pantalla (inset: -100%) y con blur se movía sin parar,
+       siendo una de las causas principales de lentitud. Se mantiene
+       la textura visual, pero fija (sin repintado continuo). */
 
     pointer-events: none;
     z-index: -1;
 }
-
 
 /* Brillo suave de las rayas */
 
@@ -1498,14 +1501,11 @@ body {
 
     filter: blur(4px);
 
-    animation: rayasMoradas 25s linear infinite;
+    /* Animación quitada por rendimiento (ver nota en .main-content::before) */
 
     pointer-events: none;
     z-index: -1;
 }
-
-
-
 
 
 /* =====================================================
@@ -1540,7 +1540,7 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 14px;
-    background: rgba(73, 245, 138, 0.10);
+    background: rgba(0, 255, 98, 0.1);
 }
 
 /* Tamaño del icono */
@@ -1588,7 +1588,7 @@ body {
     text-decoration: none;
     color: inherit;
     border: 1px solid rgba(73, 245, 138, 0.30);
-    transition: 0.3s ease;
+    transition: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Efecto al pasar el cursor sobre el botón */
@@ -1759,9 +1759,9 @@ body {
         drop-shadow(0 0 9px var(--color-nav));
 
     transition:
-        color 0.3s ease,
-        filter 0.3s ease,
-        transform 0.3s ease;
+        color 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.32s ease,
+        transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 
     transform: scale(1.08);
 }
@@ -2399,6 +2399,7 @@ body {
     .app-container {
         flex-direction: column;
         height: 100vh;
+        height: 100dvh;
     }
 
     .sidebar {
@@ -2407,6 +2408,7 @@ body {
         justify-content: space-around;
         padding: 0.8rem;
         overflow-x: auto;
+        flex: 0 0 auto;
     }
 
     .nav-menu {
@@ -2417,7 +2419,10 @@ body {
     .brand { display: none; }
 
     .main-content {
+        flex: 1 1 auto;
+        min-height: 0;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         padding: 1.2rem;
     }
 }
@@ -2489,7 +2494,7 @@ body {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     cursor: pointer;
-    transition: 0.3s ease;
+    transition: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 
@@ -2570,7 +2575,7 @@ body {
 
     color: #c9a7ff;
 
-    transition: 0.3s ease;
+    transition: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 
@@ -2589,12 +2594,21 @@ body {
 
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 
     margin-top: 1.5rem;
 }
 
 
-#mostrar-mas-semanas {
+#mostrar-mas-semanas,
+#mostrar-menos-semanas {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
     background:
         linear-gradient(
             135deg,
@@ -2608,11 +2622,12 @@ body {
 
     cursor: pointer;
 
-    transition: 0.3s ease;
+    transition: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 
-#mostrar-mas-semanas:hover {
+#mostrar-mas-semanas:hover,
+#mostrar-menos-semanas:hover {
     transform: translateY(-3px);
 
     color: #ffffff;
@@ -2622,6 +2637,31 @@ body {
     box-shadow:
         0 0 15px rgba(168, 85, 247, 0.35),
         0 0 30px rgba(53, 232, 117, 0.10);
+}
+
+
+/* =====================================================
+   MOSTRAR MENOS
+   (usa la misma base que "Mostrar más" pero con un
+   tono levemente más apagado, para diferenciarlo
+   visualmente como una acción secundaria)
+===================================================== */
+
+#mostrar-menos-semanas {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(168, 85, 247, 0.10),
+            rgba(53, 232, 117, 0.05)
+        );
+
+    border-color: rgba(168, 85, 247, 0.25);
+
+    color: #a898c4;
+
+    /* Oculto por defecto: el JS lo muestra solo cuando
+       hay semanas extra que se puedan ocultar. */
+    display: none;
 }
 
 
@@ -2665,7 +2705,7 @@ body {
 
     cursor: pointer;
 
-    transition: 0.3s ease;
+    transition: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 
@@ -2711,6 +2751,32 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+
+}
+
+
+/* =====================================================
+   ANIMACIÓN DE SALIDA (AL PRESIONAR "MOSTRAR MENOS")
+===================================================== */
+
+.tarjeta-semana-salida {
+    animation: desaparecerSemana 0.26s cubic-bezier(0.4, 0, 1, 1) forwards;
+    pointer-events: none;
+}
+
+
+@keyframes desaparecerSemana {
+
+    from {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 200px;
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(10px);
     }
 
 }
@@ -2783,6 +2849,3 @@ body {
 .seccion-proyectos {
     display: none;
 }
-
-
-

@@ -13,6 +13,8 @@
     <link rel="stylesheet"
           href="style.css">
 
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <script src="script.js"
             defer></script>
 
@@ -360,23 +362,14 @@
 
 
 
-  <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Espacio de Aprendizaje - Morado Neon</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Iconos de Lucide/FontAwesome para los elementos -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="script.js" defer></script>
-</head>
-<body>
+    <!-- =====================================================
+         SEGUNDA SECCIÓN (DASHBOARD / PORTAFOLIO)
+    ====================================================== -->
 
     <!-- Fondo de partículas/luces animadas -->
     <div class="background-glow"></div>
-    
-<div class="app-container" id="seccion-2">
+
+    <div class="app-container" id="seccion-2">
         <!-- BARRA DE NAVEGACIÓN LATERAL (NAVBAR) -->
         <aside class="sidebar">
             <div class="brand">
@@ -492,7 +485,7 @@
 
 
         <!-- =================================================
-             BOTÓN MOSTRAR MÁS
+             BOTONES MOSTRAR MÁS / MOSTRAR MENOS
         ================================================== -->
 
         <div class="mostrar-mas-contenedor">
@@ -504,6 +497,16 @@
                 <i data-lucide="chevron-down"></i>
 
                 Mostrar más
+
+            </button>
+
+            <button
+                id="mostrar-menos-semanas"
+                class="proyecto-boton">
+
+                <i data-lucide="chevron-up"></i>
+
+                Mostrar menos
 
             </button>
 
@@ -627,7 +630,7 @@
                     <h3>Chat en Vivo</h3>
                     <div class="chat-messages" id="chatMessages">
                         <div class="message msg-received">¡Hola! ¿Cómo va el proyecto?</div>
-                        <div class="message msg-sent">¡El diseño morado animado quedó genial!</div>
+                        <div class="message msg-sent">COMENZEMOS</div>
                     </div>
                     <div class="chat-input-area">
                         <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
@@ -640,4 +643,3 @@
 
 </body>
 </html>
-
