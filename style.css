@@ -891,6 +891,19 @@ h1 span {
 }
 
 /* =====================================================
+   PAUSA GLOBAL DE ANIMACIONES (pestaña en segundo plano)
+   El JS agrega esta clase al <html> cuando la pestaña no
+   está visible, para ahorrar batería/CPU. No cambia nada
+   mientras la página está siendo vista.
+===================================================== */
+
+html.animaciones-pausadas *,
+html.animaciones-pausadas *::before,
+html.animaciones-pausadas *::after {
+    animation-play-state: paused !important;
+}
+
+/* =====================================================
    RESET Y VARIABLES DE COLOR VERDE + MORADO
 ===================================================== */
 :root {
@@ -1457,7 +1470,7 @@ body {
 .main-content::before {
     content: "";
     position: absolute;
-    inset: -100%;
+    inset: -20%;
     
     background:
         repeating-linear-gradient(
@@ -1475,7 +1488,10 @@ body {
     /* Animación quitada por rendimiento: este elemento mide 3 veces
        la pantalla (inset: -100%) y con blur se movía sin parar,
        siendo una de las causas principales de lentitud. Se mantiene
-       la textura visual, pero fija (sin repintado continuo). */
+       la textura visual, pero fija (sin repintado continuo).
+       El "inset" también se redujo (de -100% a -20%): cubre lo mismo
+       en pantalla pero pinta un área mucho más pequeña, lo que
+       reduce el trabajo de la GPU/CPU al hacer scroll. */
 
     pointer-events: none;
     z-index: -1;
@@ -1486,7 +1502,7 @@ body {
 .main-content::after {
     content: "";
     position: absolute;
-    inset: -100%;
+    inset: -20%;
 
     background:
         repeating-linear-gradient(
@@ -1501,7 +1517,8 @@ body {
 
     filter: blur(4px);
 
-    /* Animación quitada por rendimiento (ver nota en .main-content::before) */
+    /* Animación quitada por rendimiento (ver nota en .main-content::before).
+       "inset" reducido por el mismo motivo: menos área pintada. */
 
     pointer-events: none;
     z-index: -1;

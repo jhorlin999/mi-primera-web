@@ -10,6 +10,17 @@ let tiltLoopActivo = false;
 
 
 /* =====================================================
+   PAUSA GLOBAL DE ANIMACIONES CSS CUANDO LA PESTAÑA
+   PASA A SEGUNDO PLANO (ahorra batería/CPU). No afecta
+   nada mientras la página está siendo vista.
+===================================================== */
+
+document.addEventListener("visibilitychange", () => {
+    document.documentElement.classList.toggle("animaciones-pausadas", document.hidden);
+});
+
+
+/* =====================================================
    CUANDO CARGA LA PÁGINA
 ===================================================== */
 
@@ -819,6 +830,32 @@ function configurarScrollSeccion2() {
 }
 
 
+/* =====================================================
+   SCROLL SEGURO DENTRO DEL PANEL (SECCIÓN 2)
+   En vez de usar scrollIntoView() -que puede intentar
+   mover el scroll de toda la página y no solo del panel
+   interno-, esta función mueve únicamente el contenedor
+   real con scroll (.main-content).
+   Esto es lo que corrige que, en el navegador móvil, al
+   abrir una semana la página "se baje" y la barra de
+   navegación del navegador se oculte sin poder volver
+   a verla: ese salto ocurría porque el scroll intentaba
+   afectar a la página completa en vez de quedarse dentro
+   del panel de la Sección 2.
+===================================================== */
+
+function scrollContenidoAlTope(comportamiento = "smooth") {
+    const contenidoPrincipal = document.querySelector("#seccion-2 .main-content");
+    if (!contenidoPrincipal) return;
+
+    contenidoPrincipal.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: comportamiento
+    });
+}
+
+
 function mostrarProyectos() {
     const proyectos = document.getElementById("proyectos");
     const dashboard = document.querySelector(".dashboard-grid");
@@ -857,18 +894,46 @@ function activarBotonProyectos() {
 
 function activarRayosFisi() {
     const rayos = document.querySelectorAll(".lightning");
+    if (!rayos.length) return;
 
-    rayos.forEach((rayo) => {
-        setInterval(() => {
-            const rotacion = Math.random() * 12 - 6;
-            const desplazamiento = Math.random() * 10 - 5;
-            const escala = 0.85 + Math.random() * 0.35;
+    const heroCard = document.querySelector(".card-hero");
 
-            rayo.style.setProperty("--rayo-rotacion", `${rotacion}deg`);
-            rayo.style.setProperty("--rayo-desplazamiento", `${desplazamiento}px`);
-            rayo.style.setProperty("--rayo-escala", escala);
+    let rayosActivos = true;
+    const temporizadores = [];
+
+    function programarRayo(rayo) {
+        const id = setTimeout(() => {
+            if (rayosActivos) {
+                const rotacion = Math.random() * 12 - 6;
+                const desplazamiento = Math.random() * 10 - 5;
+                const escala = 0.85 + Math.random() * 0.35;
+
+                rayo.style.setProperty("--rayo-rotacion", `${rotacion}deg`);
+                rayo.style.setProperty("--rayo-desplazamiento", `${desplazamiento}px`);
+                rayo.style.setProperty("--rayo-escala", escala);
+            }
+
+            programarRayo(rayo);
         }, 700 + Math.random() * 900);
-    });
+
+        temporizadores.push(id);
+    }
+
+    rayos.forEach(programarRayo);
+
+    /* Pausamos el trabajo de los rayos cuando la tarjeta
+       que los contiene no está visible en pantalla (por
+       ejemplo, al entrar a la sección "Mis Trabajos"),
+       para no seguir calculando algo que nadie ve. */
+    if (heroCard && "IntersectionObserver" in window) {
+        const observadorRayos = new IntersectionObserver((entradas) => {
+            entradas.forEach((entrada) => {
+                rayosActivos = entrada.isIntersecting;
+            });
+        }, { threshold: 0 });
+
+        observadorRayos.observe(heroCard);
+    }
 }
 
 
@@ -999,7 +1064,7 @@ function inicializarSistemaSemanas() {
             semanasMostradas = nuevoLimite;
             actualizarBotones();
 
-            listaSemanas.scrollIntoView({ behavior: "smooth", block: "start" });
+            scrollContenidoAlTope();
         });
     }
 
@@ -1058,7 +1123,7 @@ function inicializarSistemaSemanas() {
         vistaSemana.classList.remove("vista-semana-oculta");
         vistaSemana.classList.add("vista-semana-activa");
 
-        vistaSemana.scrollIntoView({ behavior: "smooth", block: "start" });
+        scrollContenidoAlTope();
     }
 
     botonRegresar.addEventListener("click", () => {
@@ -1067,7 +1132,7 @@ function inicializarSistemaSemanas() {
 
         listaSemanas.style.display = "block";
 
-        listaSemanas.scrollIntoView({ behavior: "smooth", block: "start" });
+        scrollContenidoAlTope();
     });
 
     cargarSemanasIniciales();
