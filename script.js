@@ -969,23 +969,18 @@ function inicializarSistemaSemanas() {
 
     const trabajos = {
         3: [
-            {
-                nombre: "PRESENTACION",
-                descripcion: "Trabajo realizado durante la semana 3.",
-                tipo: "PDF",
-                archivo: "archivos/proyectos/uno-present.pdf"
-            },
+            
             {
                 nombre: "TRABAJO SOBRE LA PERCEPCION: Trabajo Individual 01 — TGS 2026-II",
                 descripcion: "Trabajo realizado durante la semana 3.",
                 tipo: "PDF",
-                archivo: "archivos/proyectos/COMEDORTGS.pdf"
+                archivo: "archivos/proyectos/Trabajo Individual 01 — TGS 2026-II.pdf"
             },
             {
                 nombre: "SUBSISTEMAS: Trabajo Individual 02 — TGS 2026-II",
                 descripcion: "Trabajo realizado durante la semana 3.",
                 tipo: "PDF",
-                archivo: "archivos/proyectos/subsistemastgs.pdf"
+                archivo: "archivos/proyectos/Trabajo Individual 02 — TGS 2026-II.pdf"
             }
         ],
         4: []
