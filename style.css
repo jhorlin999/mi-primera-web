@@ -2866,3 +2866,61 @@ body {
 .seccion-proyectos {
     display: none;
 }
+
+
+
+
+
+/* =================================================
+   VENTANA DE COMENTARIOS DE CADA TRABAJO
+================================================= */
+
+.comentarios-trabajo {
+    width: 100%;
+    margin-top: 20px;
+    padding: 18px;
+    box-sizing: border-box;
+
+    max-height: 500px;
+    overflow-y: auto;
+
+    border-radius: 12px;
+    border: 1px solid rgba(128, 128, 128, 0.25);
+    background: rgba(128, 128, 128, 0.05);
+}
+
+/* Título de comentarios */
+
+.comentarios-trabajo h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+/* Contenedor de Giscus */
+
+.giscus-contenedor {
+    width: 100%;
+}
+
+/* El iframe de Giscus */
+
+.giscus,
+.giscus-frame {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Scroll más cómodo */
+
+.comentarios-trabajo::-webkit-scrollbar {
+    width: 8px;
+}
+
+.comentarios-trabajo::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: rgba(128, 128, 128, 0.5);
+}
+
+.comentarios-trabajo::-webkit-scrollbar-track {
+    background: transparent;
+}
