@@ -313,11 +313,19 @@ function activarTransicionExplorar() {
         }, 360);
 
         setTimeout(() => {
-            if (overlay) {
-                overlay.classList.remove("activo");
-            }
-            activando = false;
-        }, 780);
+    if (overlay) {
+        overlay.classList.remove("activo");
+    }
+    activando = false;
+
+    // Como ya no se regresa a la Sección 1, la apagamos por completo:
+    // sus animaciones (líneas de fondo, tilt del logo, etc.) dejan de
+    // consumir CPU/GPU mientras el usuario está en la Sección 2.
+    const hero = document.getElementById("inicio");
+    if (hero) {
+        hero.style.display = "none";
+    }
+}, 780);
     });
 }
 
@@ -1247,84 +1255,23 @@ function inicializarSistemaSemanas() {
                 =================================================
                 */
 
-              if (!giscusCargado) {
-    const scriptGiscus =
-        document.createElement("script");
+            if (!giscusCargado) {
+    const widgetGiscus = document.createElement("giscus-widget");
 
-    scriptGiscus.src =
-        "https://giscus.app/client.js";
+    widgetGiscus.setAttribute("repo", "jhorlin999/mi-primera-web");
+    widgetGiscus.setAttribute("repoid", "R_kgDOUQeMkA");
+    widgetGiscus.setAttribute("category", "General");
+    widgetGiscus.setAttribute("categoryid", "DIC_kwDOUQeMkM4DFWTD");
+    widgetGiscus.setAttribute("mapping", "specific");
+    widgetGiscus.setAttribute("term", identificadorTrabajo);
+    widgetGiscus.setAttribute("strict", "0");
+    widgetGiscus.setAttribute("reactionsenabled", "1");
+    widgetGiscus.setAttribute("emitmetadata", "0");
+    widgetGiscus.setAttribute("inputposition", "bottom");
+    widgetGiscus.setAttribute("theme", "preferred_color_scheme");
+    widgetGiscus.setAttribute("lang", "es");
 
-    scriptGiscus.setAttribute(
-        "data-repo",
-        "jhorlin999/mi-primera-web"
-    );
-
-    scriptGiscus.setAttribute(
-        "data-repo-id",
-        "R_kgDOUQeMkA"
-    );
-
-    scriptGiscus.setAttribute(
-        "data-category",
-        "General"
-    );
-
-    scriptGiscus.setAttribute(
-        "data-category-id",
-        "DIC_kwDOUQeMkM4DFWTD"
-    );
-
-    scriptGiscus.setAttribute(
-        "data-mapping",
-        "specific"
-    );
-
-    scriptGiscus.setAttribute(
-        "data-term",
-        identificadorTrabajo
-    );
-
-    scriptGiscus.setAttribute(
-        "data-strict",
-        "0"
-    );
-
-    scriptGiscus.setAttribute(
-        "data-reactions-enabled",
-        "1"
-    );
-
-    scriptGiscus.setAttribute(
-        "data-emit-metadata",
-        "0"
-    );
-
-    scriptGiscus.setAttribute(
-        "data-input-position",
-        "bottom"
-    );
-
-    scriptGiscus.setAttribute(
-        "data-theme",
-        "preferred_color_scheme"
-    );
-
-    scriptGiscus.setAttribute(
-        "data-lang",
-        "es"
-    );
-
-    scriptGiscus.setAttribute(
-        "crossorigin",
-        "anonymous"
-    );
-
-    scriptGiscus.async = false;
-
-    contenedorGiscus.appendChild(
-        scriptGiscus
-    );
-
+    contenedorGiscus.appendChild(widgetGiscus);
     giscusCargado = true;
 }
 

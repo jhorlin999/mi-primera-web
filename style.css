@@ -2924,3 +2924,23 @@ body {
 .comentarios-trabajo::-webkit-scrollbar-track {
     background: transparent;
 }
+
+/* =====================================================
+   RESET DE ESTILO PARA EL BOTÓN "COMENTAR"
+   (es un <button>, por eso el navegador le ponía
+   fondo blanco por defecto)
+===================================================== */
+
+button.proyecto-boton {
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(8, 15, 18, 0.85);
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+button.proyecto-boton:hover {
+    background: rgba(73, 245, 138, 0.10);
+}
