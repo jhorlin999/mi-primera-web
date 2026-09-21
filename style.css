@@ -2926,3 +2926,29 @@ button.proyecto-boton {
 button.proyecto-boton:hover {
     background: rgba(73, 245, 138, 0.10);
 }
+/* =====================================================
+   CORRECCIÓN: BARRA DE NAVEGACIÓN OCULTA EN MÓVIL
+   Cuando la Sección 2 está activa, la ventana ya no debe
+   tener scroll propio; el único scroll es el de .main-content.
+   Así el sidebar siempre queda visible arriba.
+===================================================== */
+
+html.seccion-2-activa,
+html.seccion-2-activa body {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+html.seccion-2-activa .app-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: auto;
+    min-height: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}

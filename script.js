@@ -60,6 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
     activarMovimientoTexto();
     activarTarjetaColgante();
     activarTransicionExplorar();
+
+
+
     activarPausaFueraDeVista();
 
     activarMenuSeccion2();
@@ -322,19 +325,24 @@ function activarTransicionExplorar() {
         }, 360);
 
         setTimeout(() => {
-    if (overlay) {
-        overlay.classList.remove("activo");
-    }
-    activando = false;
+            if (overlay) {
+                overlay.classList.remove("activo");
+            }
+            activando = false;
 
-    // Como ya no se regresa a la Sección 1, la apagamos por completo:
-    // sus animaciones (líneas de fondo, tilt del logo, etc.) dejan de
-    // consumir CPU/GPU mientras el usuario está en la Sección 2.
-    const hero = document.getElementById("inicio");
-    if (hero) {
-        hero.style.display = "none";
-    }
-}, 780);
+            // Como ya no se regresa a la Sección 1, la apagamos por completo:
+            // sus animaciones (líneas de fondo, tilt del logo, etc.) dejan de
+            // consumir CPU/GPU mientras el usuario está en la Sección 2.
+            const hero = document.getElementById("inicio");
+            if (hero) {
+                hero.style.display = "none";
+            }
+
+            // NUEVO: fija la Sección 2 a la pantalla (el CSS lo usa)
+            document.documentElement.classList.add("seccion-2-activa");
+            // NUEVO: devuelve el scroll de la ventana al tope
+            window.scrollTo(0, 0);
+        }, 780);
     });
 }
 
