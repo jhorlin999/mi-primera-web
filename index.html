@@ -13,7 +13,7 @@
     <title>Mi espacio de aprendizaje</title>
 
     <link rel="stylesheet"
-            href="style.css?v=4">
+            href="style.css?v=5">
 
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -605,6 +605,53 @@
             </div>
         </main>
     </div>
+
+
+    <!-- =====================================================
+         CORRECCIÓN DE SCROLL EN MÓVILES
+         Al tocar "Explorar", forzamos que la Sección 2 (con la
+         barra de navegación) quede completamente visible, sin
+         importar que la barra de direcciones del navegador se
+         oculte/aparezca a mitad del scroll (eso es lo que antes
+         "cortaba" la barra de navegación en el celular).
+    ====================================================== -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        var boton = document.getElementById('boton-explorar');
+        var seccion2 = document.getElementById('seccion-2');
+
+        function irASeccion2() {
+            if (!seccion2) return;
+
+            seccion2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // La barra de direcciones del navegador puede
+            // ocultarse DURANTE el scroll, cambiando el alto real
+            // de la pantalla a mitad de camino. Por eso volvemos a
+            // alinear la sección una vez que esa animación ya
+            // terminó, para corregir cualquier desfase.
+            setTimeout(function () {
+                seccion2.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }, 550);
+        }
+
+        if (boton) {
+            boton.addEventListener('click', function (e) {
+                e.preventDefault();
+                irASeccion2();
+            });
+        }
+
+        // También corregimos si el usuario entra directamente con
+        // el link #seccion-2 (por ejemplo, recargando la página
+        // estando ya en esa sección).
+        if (window.location.hash === '#seccion-2') {
+            setTimeout(irASeccion2, 300);
+        }
+
+    });
+    </script>
 
 </body>
 </html>
