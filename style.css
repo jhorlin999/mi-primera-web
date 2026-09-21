@@ -132,6 +132,7 @@ body {
 
 .hero {
     min-height: 100vh;
+    min-height: 100dvh;
     position: relative;
     display: flex;
     align-items: center;
@@ -629,6 +630,7 @@ h1 span {
     left: 0;
     width: 100%;
     height: 100vh;
+    height: 100dvh;
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -937,6 +939,8 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* =====================================================
@@ -952,9 +956,6 @@ body {
                 radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.10), transparent 40%),
                 radial-gradient(circle at 50% 50%, rgba(8, 53, 39, 0.32), transparent 60%);
     z-index: -1;
-    /* Animación quitada por rendimiento: este fondo cubre toda la
-       pantalla y se repintaba cada fotograma sin parar (infinite).
-       Ahora queda fijo (misma apariencia, sin costo de CPU/GPU). */
     opacity: 0.9;
 }
 
@@ -964,8 +965,10 @@ body {
     height: 100vh;
     height: 100dvh;
     min-height: 100vh;
+    min-height: 100dvh;
     min-width: 0;
     overflow: hidden;
+    scroll-margin-top: 0;
 }
 
 /* =====================================================
@@ -1493,14 +1496,6 @@ body {
 
     filter: blur(0.3px);
 
-    /* Animación quitada por rendimiento: este elemento mide 3 veces
-       la pantalla (inset: -100%) y con blur se movía sin parar,
-       siendo una de las causas principales de lentitud. Se mantiene
-       la textura visual, pero fija (sin repintado continuo).
-       El "inset" también se redujo (de -100% a -20%): cubre lo mismo
-       en pantalla pero pinta un área mucho más pequeña, lo que
-       reduce el trabajo de la GPU/CPU al hacer scroll. */
-
     pointer-events: none;
     z-index: -1;
 }
@@ -1524,9 +1519,6 @@ body {
         );
 
     filter: blur(4px);
-
-    /* Animación quitada por rendimiento (ver nota en .main-content::before).
-       "inset" reducido por el mismo motivo: menos área pintada. */
 
     pointer-events: none;
     z-index: -1;
@@ -1727,23 +1719,14 @@ body {
 ===================================================== */
 
 .nav-item.active {
-    /* Conservamos la posición y tamaño original */
     transform: none;
-
-    /* El color viene de cada opción */
     color: var(--color-nav);
-
-    /* Quitamos el morado del elemento seleccionado */
     background: rgba(53, 232, 117, 0.08);
-
-    /* Borde del mismo color */
     border: 1px solid color-mix(
         in srgb,
         var(--color-nav) 35%,
         transparent
     );
-
-    /* Iluminación exterior */
     box-shadow:
         0 0 8px color-mix(
             in srgb,
@@ -1856,10 +1839,6 @@ body {
    SOLO CAMBIO VISUAL
 ===================================================== */
 
-/* -----------------------------------------------------
-   COLORES BASE DEL DASHBOARD
------------------------------------------------------ */
-
 .main-content {
     --color-unsm: #35e875;
     --color-fisi: #5cf5a0;
@@ -1868,12 +1847,6 @@ body {
     --color-naranja: #9af5c0;
 }
 
-
-/* -----------------------------------------------------
-   FONDO DEL CONTENIDO
-   Mantiene el estilo oscuro, pero reduce el exceso
-   de morado.
------------------------------------------------------ */
 
 .main-content {
     background:
@@ -1895,11 +1868,6 @@ body {
 }
 
 
-/* -----------------------------------------------------
-   TÍTULO PRINCIPAL
-   Morado + Verde
------------------------------------------------------ */
-
 .dashboard-header h1 {
     background: linear-gradient(
         90deg,
@@ -1917,11 +1885,6 @@ body {
         drop-shadow(0 0 8px rgba(53, 232, 117, 0.15));
 }
 
-
-/* -----------------------------------------------------
-   BOTÓN NUEVO PROYECTO
-   Verde + Morado
------------------------------------------------------ */
 
 .btn-primary {
     background: linear-gradient(
@@ -1942,22 +1905,12 @@ body {
 }
 
 
-/* -----------------------------------------------------
-   TARJETAS
-   Base oscura + bordes suaves de distintos colores
------------------------------------------------------ */
-
 .card {
     background: rgba(7, 22, 18, 0.78);
 
     border-color: rgba(140, 255, 190, 0.14);
 }
 
-
-/* -----------------------------------------------------
-   TARJETA PRINCIPAL
-   Verde + Morado, pero mucho más suave
------------------------------------------------------ */
 
 .card-hero {
     background:
@@ -1979,11 +1932,6 @@ body {
 }
 
 
-/* -----------------------------------------------------
-   CÍRCULO PRINCIPAL
-   Verde + Morado
------------------------------------------------------ */
-
 .pulsing-circle {
     background: linear-gradient(
         135deg,
@@ -1996,11 +1944,6 @@ body {
         0 0 35px rgba(168, 85, 247, 0.18);
 }
 
-
-/* -----------------------------------------------------
-   TARJETA ESTADÍSTICAS
-   Verde UNSM
------------------------------------------------------ */
 
 .card-stats {
     border-color: rgba(53, 232, 117, 0.18);
@@ -2021,11 +1964,6 @@ body {
 }
 
 
-/* -----------------------------------------------------
-   BARRAS DE ESTADÍSTICAS
-   Verde + Morado
------------------------------------------------------ */
-
 .bar {
     background: linear-gradient(
         to top,
@@ -2039,11 +1977,6 @@ body {
         0 0 8px rgba(92, 245, 160, 0.12);
 }
 
-
-/* -----------------------------------------------------
-   TIPOGRAFÍA KINÉTICA
-   Morado + Verde
------------------------------------------------------ */
 
 .kinetic-text {
     background: linear-gradient(
@@ -2062,11 +1995,6 @@ body {
 }
 
 
-/* -----------------------------------------------------
-   BOTONES DE ACCIÓN
-   Verde
------------------------------------------------------ */
-
 .action-btn {
     background: rgba(53, 232, 117, 0.07);
 
@@ -2081,11 +2009,6 @@ body {
 }
 
 
-/* -----------------------------------------------------
-   LÍNEA DE TIEMPO
-   Morado + Verde
------------------------------------------------------ */
-
 .card-timeline {
     border-color: rgba(168, 85, 247, 0.18);
 }
@@ -2098,11 +2021,6 @@ body {
 }
 
 
-/* -----------------------------------------------------
-   BARRA DE PROGRESO
-   Verde + Morado
------------------------------------------------------ */
-
 .progress-fill {
     background: linear-gradient(
         90deg,
@@ -2112,11 +2030,6 @@ body {
     );
 }
 
-
-/* -----------------------------------------------------
-   CHAT
-   Verde + Morado
------------------------------------------------------ */
 
 .card-chat {
     border-color: rgba(73, 245, 138, 0.15);
@@ -2150,10 +2063,6 @@ body {
 }
 
 
-/* -----------------------------------------------------
-   BOTONES SUPERIORES
------------------------------------------------------ */
-
 .icon-btn:hover {
     color: var(--color-unsm);
 
@@ -2173,18 +2082,10 @@ body {
 }
 
 
-/* -----------------------------------------------------
-   BORDE GENERAL DE TARJETAS AL PASAR EL MOUSE
------------------------------------------------------ */
-
 .card:hover {
     border-color: rgba(73, 245, 138, 0.30);
 }
 
-
-/* -----------------------------------------------------
-   AMBIENTE GENERAL DEL DASHBOARD
------------------------------------------------------ */
 
 .dashboard-grid::before {
     content: "";
@@ -2693,9 +2594,6 @@ body {
 
 /* =====================================================
    MOSTRAR MENOS
-   (usa la misma base que "Mostrar más" pero con un
-   tono levemente más apagado, para diferenciarlo
-   visualmente como una acción secundaria)
 ===================================================== */
 
 #mostrar-menos-semanas {
@@ -2710,8 +2608,6 @@ body {
 
     color: #a898c4;
 
-    /* Oculto por defecto: el JS lo muestra solo cuando
-       hay semanas extra que se puedan ocultar. */
     display: none;
 }
 
@@ -3015,8 +2911,6 @@ body {
 
 /* =====================================================
    RESET DE ESTILO PARA EL BOTÓN "COMENTAR"
-   (es un <button>, por eso el navegador le ponía
-   fondo blanco por defecto)
 ===================================================== */
 
 button.proyecto-boton {
