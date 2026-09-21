@@ -1,5 +1,9 @@
+const SUPABASE_URL = "https://ugexoftyzhdkmrvwyxqn.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVnZXhvZnR5emhka21ydnd5eHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5NDQyODksImV4cCI6MjEwNTUyMDI4OX0.Bm_nNuXAp1y7ybMyECZ1U_lIjRpUdlPrlmUtP0a67iM";
+
+
 /* =====================================================
-   ESTADO GLOBAL: ¿SE VE LA PRIMERA SECCIÓN (HERO)?
+    ESTADO GLOBAL: ¿SE VE LA PRIMERA SECCIÓN (HERO)?
    Se usa para pausar animaciones/loops cuando el
    usuario ya está en la Sección 2, y así no gastar
    CPU/batería de más.
@@ -309,7 +313,12 @@ function activarTransicionExplorar() {
         }
 
         setTimeout(() => {
-            seccion2.scrollIntoView({ behavior: "auto", block: "start" });
+            seccion2.scrollIntoView({
+                behavior: "auto",
+                block: "start",
+                inline: "start"
+            });
+            scrollContenidoAlTope("auto");
         }, 360);
 
         setTimeout(() => {
@@ -774,6 +783,7 @@ function activarParallaxCardHero() {
     const pulsingCircle = document.querySelector(".pulsing-circle");
 
     if (!heroCard || !pulsingCircle) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     let cuadroPendiente = false;
     let ultimoEvento = null;
@@ -1193,7 +1203,16 @@ function inicializarSistemaSemanas() {
 
                 <h4>💬 Comentarios de este trabajo</h4>
 
-                <div class="giscus-contenedor"></div>
+                <form class="formulario-comentario">
+                    <input type="text" class="comentario-nombre" placeholder="Tu nombre" maxlength="60" required>
+                    <textarea class="comentario-texto" placeholder="Escribe tu comentario" maxlength="500" rows="3" required></textarea>
+                    <button type="submit" class="proyecto-boton comentario-publicar">
+                        <i data-lucide="send"></i>
+                        Publicar comentario
+                    </button>
+                </form>
+
+                <div class="lista-comentarios"></div>
 
             </div>
         `;
@@ -1210,11 +1229,111 @@ function inicializarSistemaSemanas() {
             tarjetaTrabajo.querySelector(".comentarios-trabajo");
 
 
-        const contenedorGiscus =
-            tarjetaTrabajo.querySelector(".giscus-contenedor");
+        const formularioComentario =
+            tarjetaTrabajo.querySelector(".formulario-comentario");
+        const nombreComentario =
+            tarjetaTrabajo.querySelector(".comentario-nombre");
+        const textoComentario =
+            tarjetaTrabajo.querySelector(".comentario-texto");
+        const listaComentarios =
+            tarjetaTrabajo.querySelector(".lista-comentarios");
+        async function obtenerComentarios() {
+            const respuesta = await fetch(
+                `${SUPABASE_URL}/rest/v1/comentarios?trabajo_id=eq.${encodeURIComponent(identificadorTrabajo)}&select=nombre,comentario,creado_en&order=creado_en.asc`,
+                {
+                    headers: {
+                        apikey: SUPABASE_ANON_KEY,
+                        Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                }
+            );
 
+            if (!respuesta.ok) {
+                throw new Error("No se pudieron cargar los comentarios.");
+            }
 
-        let giscusCargado = false;
+            return respuesta.json();
+        }
+
+        async function mostrarComentarios() {
+            listaComentarios.innerHTML = "";
+
+            let comentarios;
+
+            try {
+                comentarios = await obtenerComentarios();
+            } catch (error) {
+                listaComentarios.textContent = "No se pudieron cargar los comentarios.";
+                return;
+            }
+
+            comentarios.forEach((comentario) => {
+                const elemento = document.createElement("article");
+                elemento.className = "comentario-publicado";
+
+                const cabecera = document.createElement("div");
+                cabecera.className = "comentario-cabecera";
+
+                const nombre = document.createElement("strong");
+                nombre.textContent = comentario.nombre;
+
+                const fecha = document.createElement("time");
+                fecha.textContent = new Intl.DateTimeFormat("es", {
+                    dateStyle: "medium",
+                    timeStyle: "short"
+                }).format(new Date(comentario.creado_en));
+
+                const texto = document.createElement("p");
+                texto.textContent = comentario.comentario;
+
+                cabecera.append(nombre, fecha);
+                elemento.append(cabecera, texto);
+                listaComentarios.appendChild(elemento);
+            });
+        }
+
+        mostrarComentarios();
+
+        formularioComentario.addEventListener("submit", async (evento) => {
+            evento.preventDefault();
+
+            const nombre = nombreComentario.value.trim();
+            const texto = textoComentario.value.trim();
+
+            if (!nombre || !texto) return;
+
+            const botonPublicar = formularioComentario.querySelector("button");
+            botonPublicar.disabled = true;
+
+            try {
+                const respuesta = await fetch(`${SUPABASE_URL}/rest/v1/comentarios`, {
+                    method: "POST",
+                    headers: {
+                        apikey: SUPABASE_ANON_KEY,
+                        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+                        "Content-Type": "application/json",
+                        Prefer: "return=minimal"
+                    },
+                    body: JSON.stringify({
+                        trabajo_id: identificadorTrabajo,
+                        nombre,
+                        comentario: texto
+                    })
+                });
+
+                if (!respuesta.ok) {
+                    listaComentarios.textContent = "No se pudo publicar el comentario.";
+                    return;
+                }
+
+                formularioComentario.reset();
+                await mostrarComentarios();
+            } catch (error) {
+                listaComentarios.textContent = "No se pudo conectar con el servidor.";
+            } finally {
+                botonPublicar.disabled = false;
+            }
+        });
 
 
         /*
@@ -1223,7 +1342,7 @@ function inicializarSistemaSemanas() {
         =====================================================
         */
 
-        botonComentar.addEventListener("click", () => {
+        botonComentar.addEventListener("click", async () => {
 
             const comentariosOcultos =
                 comentariosTrabajo.style.display === "none";
@@ -1237,39 +1356,13 @@ function inicializarSistemaSemanas() {
 
                 comentariosTrabajo.style.display = "block";
 
+                await mostrarComentarios();
+
 
                 botonComentar.innerHTML = `
                     <i data-lucide="message-circle-off"></i>
                     Ocultar comentarios
                 `;
-
-
-                /*
-                =================================================
-                CARGAR GISCUS UNA SOLA VEZ PARA ESTE TRABAJO
-                =================================================
-                */
-
-            if (!giscusCargado) {
-    const widgetGiscus = document.createElement("giscus-widget");
-
-    widgetGiscus.setAttribute("repo", "jhorlin999/mi-primera-web");
-    widgetGiscus.setAttribute("repoid", "R_kgDOUQeMkA");
-    widgetGiscus.setAttribute("category", "General");
-    widgetGiscus.setAttribute("categoryid", "DIC_kwDOUQeMkM4DFWTD");
-    widgetGiscus.setAttribute("mapping", "specific");
-    widgetGiscus.setAttribute("term", identificadorTrabajo);
-    widgetGiscus.setAttribute("strict", "0");
-    widgetGiscus.setAttribute("reactionsenabled", "1");
-    widgetGiscus.setAttribute("emitmetadata", "0");
-    widgetGiscus.setAttribute("inputposition", "bottom");
-    widgetGiscus.setAttribute("theme", "preferred_color_scheme");
-    widgetGiscus.setAttribute("lang", "es");
-
-    contenedorGiscus.appendChild(widgetGiscus);
-    giscusCargado = true;
-}
-
 
                 inicializarIconosLucide();
 

@@ -964,6 +964,7 @@ body {
     height: 100vh;
     height: 100dvh;
     min-height: 100vh;
+    min-width: 0;
     overflow: hidden;
 }
 
@@ -1023,6 +1024,7 @@ body {
     align-items: center;
     gap: 1rem;
     padding: 0.9rem 1.2rem;
+    min-height: 44px;
     color: var(--text-muted);
     text-decoration: none;
     border-radius: 12px;
@@ -1088,11 +1090,13 @@ body {
 ===================================================== */
 .main-content {
     flex: 1;
+    min-width: 0;
     padding: 2rem;
     display: flex;
     flex-direction: column;
     gap: 2rem;
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
     animation: fadeIn 1s var(--transition-smooth);
@@ -1187,7 +1191,9 @@ body {
 .dashboard-header h1 {
     font-size: 2rem;
     letter-spacing: 1px;
+    line-height: 1.15;
     background: linear-gradient(90deg, #ffffff, var(--purple-light));
+    background-clip: text;
     -webkit-background-clip: text;   
     -webkit-text-fill-color: transparent;
 }
@@ -1275,6 +1281,7 @@ body {
     font-weight: 700;
     margin: 0.8rem 0;
     color: #49f58a;
+    overflow-wrap: anywhere;
 }
 
 .wave-chart {
@@ -1317,6 +1324,7 @@ body {
     margin: 1.5rem 0;
     background: linear-gradient(90deg, #fff, #49f58a, #a855f7, #fff);
     background-size: 200%;
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: shineText 4s linear infinite;
@@ -1900,6 +1908,7 @@ body {
         var(--color-unsm)
     );
 
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 
@@ -2047,6 +2056,7 @@ body {
 
     background-size: 250%;
 
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -2468,6 +2478,11 @@ body {
         font-size: 1.4rem;
     }
 
+    .header-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
     .btn-primary {
         width: 100%;
         justify-content: center;
@@ -2480,6 +2495,15 @@ body {
     .pulsing-circle { width: 80px; height: 80px; }
 
     .chat-messages { max-height: 110px; }
+
+    .tarjeta-semana {
+        gap: 0.8rem;
+    }
+
+    .semana-info p,
+    .proyecto-info p {
+        overflow-wrap: anywhere;
+    }
 }
 
 
@@ -2896,10 +2920,64 @@ body {
     margin-bottom: 15px;
 }
 
-/* Contenedor de Giscus */
+/* Contenedor de comentarios */
 
-.giscus-contenedor {
+.formulario-comentario {
     width: 100%;
+    display: grid;
+    gap: 10px;
+}
+
+.formulario-comentario input,
+.formulario-comentario textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 8px;
+    background: rgba(8, 15, 18, 0.75);
+    color: #ffffff;
+    font: inherit;
+    resize: vertical;
+}
+
+.formulario-comentario input:focus,
+.formulario-comentario textarea:focus {
+    outline: none;
+    border-color: #49f58a;
+    box-shadow: 0 0 0 2px rgba(73, 245, 138, 0.15);
+}
+
+.comentario-publicar {
+    justify-self: start;
+}
+
+.lista-comentarios {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.comentario-publicado {
+    padding: 12px;
+    border-left: 2px solid #49f58a;
+    background: rgba(8, 15, 18, 0.55);
+}
+
+.comentario-cabecera {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.comentario-cabecera time {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.comentario-publicado p {
+    margin: 0;
+    overflow-wrap: anywhere;
 }
 
 /* El iframe de Giscus */
