@@ -12,7 +12,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 let heroVisible = true;
 let tiltLoopActivo = false;
-let semanaSeleccionadaActual = 3;
+let semanaSeleccionadaActual = 1;
 
 
 /* =====================================================
@@ -130,8 +130,8 @@ function inicializarGestorProyectos() {
     }
 
     if (semana) {
-        for (let numero = 3; numero <= 15; numero++) {
-            semana.insertAdjacentHTML("beforeend", `<option value="${numero}">Semana ${numero}</option>`);
+        for (let numero = 1; numero <= 3; numero++) {
+            semana.insertAdjacentHTML("beforeend", `<option value="${numero}">Unidad ${numero}</option>`);
         }
     }
 
@@ -1175,13 +1175,13 @@ function inicializarSistemaSemanas() {
         !descripcionSemana || !botonRegresar
     ) return;
 
-    const semanaInicial = 3;
-    const semanaFinal = 15;
+    const semanaInicial = 1;
+    const semanaFinal = 3;
     const semanasPorPagina = 3;
     let semanasMostradas = semanaInicial;
 
     const trabajos = {
-        3: [
+        1: [
             
             {
                 nombre: "TRABAJO SOBRE LA PERCEPCION: Trabajo Individual 01 — TGS 2026-II",
@@ -1197,15 +1197,8 @@ function inicializarSistemaSemanas() {
             },
             
         ],
-        4: []
-        
-        , 5: []
-        
-        , 6: []
-        
-        
-        , 7: [], 8: [], 9: [],
-        10: [], 11: [], 12: [], 13: [], 14: [], 15: []
+        2: [],
+        3: []
     };
 
     function crearSemana(numeroSemana) {
@@ -1214,10 +1207,10 @@ function inicializarSistemaSemanas() {
         tarjeta.dataset.semana = numeroSemana;
 
         tarjeta.innerHTML = `
-            <div class="semana-numero">SEM ${numeroSemana}</div>
+            <div class="semana-numero">UNIDAD ${numeroSemana}</div>
             <div class="semana-info">
-                <h3>Semana ${numeroSemana}</h3>
-                <p>Ver todos los trabajos de esta semana.</p>
+                <h3>Unidad ${numeroSemana}</h3>
+                <p>Ver todos los trabajos de esta unidad.</p>
             </div>
             <div class="semana-flecha">
                 <i data-lucide="chevron-right"></i>
