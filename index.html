@@ -12,11 +12,12 @@
 
     <title>Mi espacio de aprendizaje</title>
 
-    <link rel="stylesheet" href="style.css?v=6">
+    <link rel="stylesheet" href="style.css?v=7">
 
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="script.js"
+    <script src="script.js?v=7"
             defer></script>
 
 </head>
@@ -417,9 +418,6 @@
                         ALFARO PERALTA</h1>
                     <p>Bienvenido a mi blog</p>
                 </div>
-                <button class="btn-primary">
-                    <i data-lucide="plus"></i> NEW PROYECT
-                </button>
             </div>
 
 
@@ -446,6 +444,10 @@
                 </p>
 
             </div>
+
+            <button class="btn-primary" id="boton-nuevo-proyecto" type="button">
+                <i data-lucide="plus"></i> Subir archivo
+            </button>
 
         </div>
 
@@ -538,6 +540,50 @@
     </div>
 
 </section>
+
+<div class="modal-proyecto" id="modal-proyecto" aria-hidden="true">
+    <div class="modal-proyecto-contenido" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-proyecto">
+        <button class="modal-proyecto-cerrar" id="cerrar-modal-proyecto" type="button" aria-label="Cerrar">
+            <i data-lucide="x"></i>
+        </button>
+
+        <h2 id="titulo-modal-proyecto">Nuevo proyecto</h2>
+        <p id="estado-proyecto">Inicia sesión para subir un trabajo.</p>
+
+        <form id="formulario-acceso-proyecto" class="formulario-proyecto">
+            <label>
+                Correo
+                <input id="correo-proyecto" type="email" autocomplete="email" required>
+            </label>
+            <label>
+                Contraseña
+                <input id="contrasena-proyecto" type="password" autocomplete="current-password" required>
+            </label>
+            <button class="proyecto-boton" type="submit">Iniciar sesión</button>
+        </form>
+
+        <form id="formulario-nuevo-proyecto" class="formulario-proyecto" hidden>
+            <label>
+                Nombre del trabajo
+                <input id="nombre-proyecto" type="text" maxlength="140" required>
+            </label>
+            <label>
+                Descripción
+                <textarea id="descripcion-proyecto" maxlength="300" rows="3"></textarea>
+            </label>
+            <label>
+                Semana
+                <select id="semana-proyecto" required></select>
+            </label>
+            <label>
+                PDF
+                <input id="archivo-proyecto" type="file" accept="application/pdf,.pdf" required>
+            </label>
+            <button class="proyecto-boton" type="submit">Subir proyecto</button>
+            <button class="proyecto-boton" id="cerrar-sesion-proyecto" type="button">Cerrar sesión</button>
+        </form>
+    </div>
+</div>
 
 
 
@@ -649,6 +695,93 @@
             setTimeout(irASeccion2, 300);
         }
 
+    });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const boton = document.getElementById('boton-nuevo-proyecto');
+        const modal = document.getElementById('modal-proyecto');
+        const acceso = document.getElementById('formulario-acceso-proyecto');
+        const formulario = document.getElementById('formulario-nuevo-proyecto');
+        const estado = document.getElementById('estado-proyecto');
+        const cerrar = document.getElementById('cerrar-modal-proyecto');
+        const cerrarSesion = document.getElementById('cerrar-sesion-proyecto');
+
+        if (!boton || !modal || !acceso || !formulario || !estado) return;
+
+        const mostrarLogin = function () {
+            modal.classList.add('activo');
+            acceso.hidden = false;
+            acceso.style.display = 'grid';
+            formulario.hidden = true;
+            formulario.style.display = 'none';
+            estado.textContent = 'Inicia sesión para subir un trabajo.';
+            acceso.reset();
+            formulario.reset();
+        };
+
+        const mostrarSubida = function () {
+            acceso.hidden = true;
+            acceso.style.display = 'none';
+            formulario.hidden = false;
+            formulario.style.display = 'grid';
+            estado.textContent = 'Sesión iniciada. Ya puedes subir un PDF.';
+        };
+
+        boton.addEventListener('click', function () {
+            mostrarLogin();
+        });
+
+        if (cerrar) {
+            cerrar.addEventListener('click', function () {
+                modal.classList.remove('activo');
+            });
+        }
+
+        if (cerrarSesion) {
+            cerrarSesion.addEventListener('click', function () {
+                if (window.supabase && window.supabase.auth) {
+                    window.supabase.auth.signOut();
+                }
+                mostrarLogin();
+            });
+        }
+
+        acceso.addEventListener('submit', async function (evento) {
+            evento.preventDefault();
+            const correo = document.getElementById('correo-proyecto').value.trim();
+            const contrasena = document.getElementById('contrasena-proyecto').value;
+
+            if (!correo || !contrasena) {
+                estado.textContent = 'Debes ingresar tu correo y contraseña.';
+                return;
+            }
+
+            if (!window.supabase || !window.supabase.auth) {
+                estado.textContent = 'No se pudo conectar al sistema de acceso.';
+                return;
+            }
+
+            try {
+                const resultado = await window.supabase.auth.signInWithPassword({
+                    email: correo,
+                    password: contrasena
+                });
+
+                if (resultado.error) {
+                    estado.textContent = 'Correo o contraseña incorrectos.';
+                    acceso.reset();
+                    return;
+                }
+
+                mostrarSubida();
+                acceso.reset();
+            } catch (error) {
+                estado.textContent = 'Correo o contraseña incorrectos.';
+                acceso.reset();
+            }
+        });
     });
     </script>
 

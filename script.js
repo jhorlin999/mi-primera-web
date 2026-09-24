@@ -1,4 +1,5 @@
 const SUPABASE_URL = "https://ugexoftyzhdkmrvwyxqn.supabase.co";
+let supabaseClient;
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVnZXhvZnR5emhka21ydnd5eHFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5NDQyODksImV4cCI6MjEwNTUyMDI4OX0.Bm_nNuXAp1y7ybMyECZ1U_lIjRpUdlPrlmUtP0a67iM";
 
 
@@ -11,6 +12,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 let heroVisible = true;
 let tiltLoopActivo = false;
+let semanaSeleccionadaActual = 3;
 
 
 /* =====================================================
@@ -29,6 +31,11 @@ document.addEventListener("visibilitychange", () => {
 ===================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    supabaseClient = window.supabase?.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
 
     const intro = document.getElementById("intro");
     const contenido = document.querySelector(".contenido-hero");
@@ -67,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     activarMenuSeccion2();
     activarBotonProyectos();
+    inicializarGestorProyectos();
     configurarScrollSeccion2();
     inicializarIconosLucide();
     inicializarChatbotJhorlin();
@@ -75,6 +83,194 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarSistemaSemanas();
 
 });
+
+
+function inicializarGestorProyectos() {
+    const boton = document.getElementById("boton-nuevo-proyecto");
+    const modal = document.getElementById("modal-proyecto");
+    const cerrar = document.getElementById("cerrar-modal-proyecto");
+    const acceso = document.getElementById("formulario-acceso-proyecto");
+    const formulario = document.getElementById("formulario-nuevo-proyecto");
+    const estado = document.getElementById("estado-proyecto");
+    const semana = document.getElementById("semana-proyecto");
+    const cerrarSesion = document.getElementById("cerrar-sesion-proyecto");
+    const MAXIMO_PESO_PDF = 10 * 1024 * 1024;
+
+    if (!boton || !modal || !cerrar || !acceso || !formulario) return;
+
+    if (!supabaseClient) {
+        if (estado) {
+            estado.textContent = "La conexión con Supabase no está disponible.";
+        }
+        return;
+    }
+
+    const mostrarEstado = (mensaje) => {
+        if (estado) {
+            estado.textContent = mensaje;
+        }
+    };
+
+    function mostrarFormularioAcceso() {
+        acceso.hidden = false;
+        acceso.style.display = "grid";
+        formulario.hidden = true;
+        formulario.style.display = "none";
+        mostrarEstado("Inicia sesión para subir un trabajo.");
+        acceso.reset();
+        formulario.reset();
+    }
+
+    function mostrarFormularioSubida() {
+        acceso.hidden = true;
+        acceso.style.display = "none";
+        formulario.hidden = false;
+        formulario.style.display = "grid";
+        mostrarEstado("Sesión iniciada. Ya puedes subir un PDF.");
+    }
+
+    if (semana) {
+        for (let numero = 3; numero <= 15; numero++) {
+            semana.insertAdjacentHTML("beforeend", `<option value="${numero}">Semana ${numero}</option>`);
+        }
+    }
+
+    boton.addEventListener("click", async () => {
+        const seleccionSemanas = document.getElementById("semana-proyecto");
+        if (seleccionSemanas) {
+            seleccionSemanas.value = String(semanaSeleccionadaActual || 3);
+        }
+
+        modal.classList.add("activo");
+        mostrarFormularioAcceso();
+    });
+
+    cerrar.addEventListener("click", () => {
+        modal.classList.remove("activo");
+        mostrarFormularioAcceso();
+    });
+
+    if (cerrarSesion) {
+        cerrarSesion.addEventListener("click", async () => {
+            const { error } = await supabaseClient.auth.signOut();
+            if (error) {
+                console.error("Error al cerrar sesión:", error);
+            }
+            mostrarFormularioAcceso();
+        });
+    }
+
+    acceso.addEventListener("submit", async (evento) => {
+        evento.preventDefault();
+
+        const correo = document.getElementById("correo-proyecto")?.value.trim();
+        const contrasena = document.getElementById("contrasena-proyecto")?.value;
+
+        if (!correo || !contrasena) {
+            mostrarEstado("Debes ingresar tu correo y contraseña.");
+            return;
+        }
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email: correo, password: contrasena });
+
+        if (error) {
+            console.error("Error al iniciar sesión:", error);
+            mostrarEstado("Correo o contraseña incorrectos.");
+            acceso.reset();
+            return;
+        }
+
+        if (!data?.user) {
+            mostrarEstado("No se pudo iniciar sesión. Inténtalo de nuevo.");
+            return;
+        }
+
+        mostrarFormularioSubida();
+        acceso.reset();
+    });
+
+    formulario.addEventListener("submit", async (evento) => {
+        evento.preventDefault();
+
+        const { data: usuarioData, error: errorUsuario } = await supabaseClient.auth.getUser();
+        const usuario = usuarioData?.user;
+
+        if (errorUsuario || !usuario) {
+            console.error("Error al validar sesión:", errorUsuario);
+            mostrarFormularioAcceso();
+            return;
+        }
+
+        const archivo = document.getElementById("archivo-proyecto")?.files?.[0];
+        const nombre = document.getElementById("nombre-proyecto")?.value.trim();
+        const descripcion = document.getElementById("descripcion-proyecto")?.value.trim();
+        const numeroSemana = Number(semana?.value ?? semanaSeleccionadaActual ?? 3);
+
+        if (!nombre) {
+            mostrarEstado("Escribe un nombre para el trabajo.");
+            return;
+        }
+
+        if (!archivo) {
+            mostrarEstado("Selecciona un archivo PDF.");
+            return;
+        }
+
+        const extensionPdf = archivo.name.toLowerCase().endsWith(".pdf");
+        if (!extensionPdf && archivo.type !== "application/pdf") {
+            mostrarEstado("El archivo debe ser un PDF válido.");
+            return;
+        }
+
+        if (archivo.size > MAXIMO_PESO_PDF) {
+            mostrarEstado("El PDF supera el tamaño máximo permitido (10 MB).");
+            return;
+        }
+
+        mostrarEstado("Subiendo...");
+
+        const ruta = `${usuario.id}/${Date.now()}-${archivo.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
+        const { error: errorSubida } = await supabaseClient.storage.from("proyectos").upload(ruta, archivo, {
+            contentType: "application/pdf",
+            upsert: false
+        });
+
+        if (errorSubida) {
+            console.error("Error al subir archivo:", errorSubida);
+            mostrarEstado("No se pudo subir el PDF. Revisa la configuración del bucket.");
+            return;
+        }
+
+        const { data: urlData } = supabaseClient.storage.from("proyectos").getPublicUrl(ruta);
+        const url = urlData?.publicUrl;
+
+        if (!url) {
+            mostrarEstado("No se pudo generar la URL pública del archivo.");
+            return;
+        }
+
+        const { error: errorRegistro } = await supabaseClient.from("trabajos").insert({
+            nombre,
+            descripcion: descripcion || "",
+            semana: numeroSemana,
+            archivo_url: url,
+            autor_id: usuario.id,
+            created_at: new Date().toISOString()
+        });
+
+        if (errorRegistro) {
+            console.error("Error al guardar el trabajo:", errorRegistro);
+            mostrarEstado("El PDF subió, pero no se pudo guardar el trabajo.");
+            return;
+        }
+
+        mostrarEstado("Trabajo subido correctamente.");
+        formulario.reset();
+        if (semana) {
+            semana.value = String(semanaSeleccionadaActual || 3);
+        }
+    });
+}
 
 
 function ocultarSeccion2Inicialmente() {
@@ -999,7 +1195,8 @@ function inicializarSistemaSemanas() {
                 descripcion: "Trabajo realizado durante la semana 3.",
                 tipo: "PDF",
                 archivo: "archivos/proyectos/Trabajo Individual 02 — TGS 2026-II.pdf"
-            }
+            },
+            
         ],
         4: []
         
@@ -1102,6 +1299,7 @@ function inicializarSistemaSemanas() {
 
    function abrirSemana(numeroSemana) {
 
+    semanaSeleccionadaActual = numeroSemana;
     const listaTrabajos = trabajos[numeroSemana] || [];
 
     tituloSemana.textContent = `Semana ${numeroSemana}`;
