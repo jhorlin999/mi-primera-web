@@ -254,8 +254,7 @@ function inicializarGestorProyectos() {
             descripcion: descripcion || "",
             semana: numeroSemana,
             archivo_url: url,
-            autor_id: usuario.id,
-            created_at: new Date().toISOString()
+            creado_por: usuario.id
         });
 
         if (errorRegistro) {
@@ -1297,10 +1296,44 @@ function inicializarSistemaSemanas() {
 
 
 
-   function abrirSemana(numeroSemana) {
+   async function abrirSemana(numeroSemana) {
 
     semanaSeleccionadaActual = numeroSemana;
-    const listaTrabajos = trabajos[numeroSemana] || [];
+
+    /*
+    =====================================================
+    TRABAJOS DE LA SEMANA
+    - Locales: los escritos a mano en el objeto "trabajos"
+    - Subidos: los guardados en la tabla "trabajos" de Supabase
+    =====================================================
+    */
+
+    const trabajosLocales = trabajos[numeroSemana] || [];
+
+    let trabajosSubidos = [];
+
+    try {
+        const { data, error } = await supabaseClient
+            .from("trabajos")
+            .select("nombre, descripcion, archivo_url")
+            .eq("semana", numeroSemana)
+            .order("id", { ascending: true });
+
+        if (error) {
+            console.error("Error al leer trabajos:", error);
+        } else if (data) {
+            trabajosSubidos = data.map((t) => ({
+                nombre: t.nombre,
+                descripcion: t.descripcion || `Trabajo realizado durante la semana ${numeroSemana}.`,
+                tipo: "PDF",
+                archivo: t.archivo_url
+            }));
+        }
+    } catch (error) {
+        console.error("No se pudo consultar Supabase:", error);
+    }
+
+    const listaTrabajos = [...trabajosLocales, ...trabajosSubidos];
 
     tituloSemana.textContent = `Semana ${numeroSemana}`;
 
