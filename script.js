@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     prepararLetras(titulo);
 
     activarMovimientoTexto();
+        activarMovimientoLetrasTitulo();
     activarTarjetaColgante();
     activarTransicionExplorar();
 
@@ -362,6 +363,54 @@ function activarMovimientoTexto() {
 }
 
 
+
+function activarMovimientoLetrasTitulo() {
+    const titulo = document.getElementById("titulo-principal");
+    if (!titulo) return;
+
+    const letras = titulo.querySelectorAll(".letra");
+    if (!letras.length) return;
+
+    const radioEfecto = 90;
+    const desplazamientoMaximo = 14;
+
+    let cuadroPendiente = false;
+    let ultimoEvento = null;
+
+    document.addEventListener("mousemove", (evento) => {
+        if (!heroVisible) return;
+        if (document.documentElement.classList.contains("seccion-2-activa")) return;
+        ultimoEvento = evento;
+        if (cuadroPendiente) return;
+        cuadroPendiente = true;
+
+        requestAnimationFrame(() => {
+            cuadroPendiente = false;
+            if (!ultimoEvento) return;
+
+            letras.forEach((letra) => {
+                const rect = letra.getBoundingClientRect();
+                const centroX = rect.left + rect.width / 2;
+                const centroY = rect.top + rect.height / 2;
+
+                const distanciaX = ultimoEvento.clientX - centroX;
+                const distanciaY = ultimoEvento.clientY - centroY;
+                const distancia = Math.sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
+
+                if (distancia < radioEfecto) {
+                    const intensidad = (1 - distancia / radioEfecto) * desplazamientoMaximo;
+                    letra.style.transform = `translateY(${-intensidad}px) scale(${1 + intensidad / desplazamientoMaximo * 0.15})`;
+                } else {
+                    letra.style.transform = "translateY(0) scale(1)";
+                }
+            });
+        });
+    });
+}
+
+
+
+
 function activarTarjetaColgante() {
     const pivote = document.querySelector(".pivote-logo");
     const contenedorLogo = document.querySelector(".contenedor-logo");
@@ -517,7 +566,7 @@ function activarTransicionExplorar() {
                 inline: "start"
             });
             scrollContenidoAlTope("auto");
-        }, 360);
+        }, 150);
 
         setTimeout(() => {
             if (overlay) {
@@ -537,7 +586,7 @@ function activarTransicionExplorar() {
             document.documentElement.classList.add("seccion-2-activa");
             // NUEVO: devuelve el scroll de la ventana al tope
             window.scrollTo(0, 0);
-        }, 780);
+        }, 500);
     });
 }
 
@@ -1053,16 +1102,6 @@ function configurarScrollSeccion2() {
 
 /* =====================================================
    SCROLL SEGURO DENTRO DEL PANEL (SECCIÓN 2)
-   En vez de usar scrollIntoView() -que puede intentar
-   mover el scroll de toda la página y no solo del panel
-   interno-, esta función mueve únicamente el contenedor
-   real con scroll (.main-content).
-   Esto es lo que corrige que, en el navegador móvil, al
-   abrir una semana la página "se baje" y la barra de
-   navegación del navegador se oculte sin poder volver
-   a verla: ese salto ocurría porque el scroll intentaba
-   afectar a la página completa en vez de quedarse dentro
-   del panel de la Sección 2.
 ===================================================== */
 
 function scrollContenidoAlTope(comportamiento = "smooth") {
@@ -1142,10 +1181,6 @@ function activarRayosFisi() {
 
     rayos.forEach(programarRayo);
 
-    /* Pausamos el trabajo de los rayos cuando la tarjeta
-       que los contiene no está visible en pantalla (por
-       ejemplo, al entrar a la sección "Mis Trabajos"),
-       para no seguir calculando algo que nadie ve. */
     if (heroCard && "IntersectionObserver" in window) {
         const observadorRayos = new IntersectionObserver((entradas) => {
             entradas.forEach((entrada) => {
@@ -1182,7 +1217,6 @@ function inicializarSistemaSemanas() {
 
     const trabajos = {
         1: [
-            
             {
                 nombre: "TRABAJO SOBRE LA PERCEPCION: Trabajo Individual 01 — TGS 2026-II",
                 descripcion: "Trabajo realizado durante la semana 3.",
@@ -1194,12 +1228,13 @@ function inicializarSistemaSemanas() {
                 descripcion: "Trabajo realizado durante la semana 3.",
                 tipo: "PDF",
                 archivo: "archivos/proyectos/Trabajo Individual 02 — TGS 2026-II.pdf"
-            },
-            
+            }
         ],
         2: [],
         3: []
     };
+
+    const cacheSupabasePorSemana = {};
 
     function crearSemana(numeroSemana) {
         const tarjeta = document.createElement("div");
@@ -1207,15 +1242,17 @@ function inicializarSistemaSemanas() {
         tarjeta.dataset.semana = numeroSemana;
 
         tarjeta.innerHTML = `
-            <div class="semana-numero">UNIDAD ${numeroSemana}</div>
-            <div class="semana-info">
-                <h3>Unidad ${numeroSemana}</h3>
-                <p>Ver todos los trabajos de esta unidad.</p>
-            </div>
-            <div class="semana-flecha">
-                <i data-lucide="chevron-right"></i>
-            </div>
-        `;
+    <div class="semana-numero">
+        <img src="archivos/galeria/1234unsm.png" alt="Unidad ${numeroSemana}">
+    </div>
+    <div class="semana-info">
+        <h3>Unidad ${numeroSemana}</h3>
+        <p>Ver todos los trabajos de esta unidad.</p>
+    </div>
+    <div class="semana-flecha">
+        <i data-lucide="chevron-right"></i>
+    </div>
+`;
 
         tarjeta.addEventListener("click", () => {
             abrirSemana(numeroSemana);
@@ -1286,372 +1323,348 @@ function inicializarSistemaSemanas() {
     }
 
 
+    async function abrirSemana(numeroSemana) {
 
+        semanaSeleccionadaActual = numeroSemana;
 
+        const trabajosLocales = trabajos[numeroSemana] || [];
 
-   async function abrirSemana(numeroSemana) {
+        tituloSemana.textContent = `Unidad ${numeroSemana}`;
 
-    semanaSeleccionadaActual = numeroSemana;
+        descripcionSemana.textContent =
+            `Trabajos realizados durante la unidad ${numeroSemana}.`;
 
-    /*
-    =====================================================
-    TRABAJOS DE LA SEMANA
-    - Locales: los escritos a mano en el objeto "trabajos"
-    - Subidos: los guardados en la tabla "trabajos" de Supabase
-    =====================================================
-    */
+        listaSemanas.style.display = "none";
 
-    const trabajosLocales = trabajos[numeroSemana] || [];
+        vistaSemana.classList.remove("vista-semana-oculta");
+        vistaSemana.classList.add("vista-semana-activa");
 
-    let trabajosSubidos = [];
+        scrollContenidoAlTope();
 
-    try {
-        const { data, error } = await supabaseClient
-            .from("trabajos")
-            .select("nombre, descripcion, archivo_url")
-            .eq("semana", numeroSemana)
-            .order("id", { ascending: true });
+        const yaEnCache = cacheSupabasePorSemana[numeroSemana];
 
-        if (error) {
-            console.error("Error al leer trabajos:", error);
-        } else if (data) {
-            trabajosSubidos = data.map((t) => ({
-                nombre: t.nombre,
-                descripcion: t.descripcion || `Trabajo realizado durante la semana ${numeroSemana}.`,
-                tipo: "PDF",
-                archivo: t.archivo_url
-            }));
+        if (yaEnCache) {
+            renderizarListaTrabajos([...trabajosLocales, ...yaEnCache]);
+            return;
         }
-    } catch (error) {
-        console.error("No se pudo consultar Supabase:", error);
-    }
 
-    const listaTrabajos = [...trabajosLocales, ...trabajosSubidos];
-
-    tituloSemana.textContent = `Semana ${numeroSemana}`;
-
-    descripcionSemana.textContent =
-        `Trabajos realizados durante la semana ${numeroSemana}.`;
-
-    trabajosSemana.innerHTML = "";
-
-
-    if (listaTrabajos.length === 0) {
-
-        const sinTrabajos = document.createElement("div");
-
-        sinTrabajos.className =
-            "proyecto-card trabajo-semana-entrada";
-
-        sinTrabajos.innerHTML = `
-            <div class="proyecto-icono">
-                <i data-lucide="folder-open"></i>
-            </div>
-
-            <div class="proyecto-info">
-                <h3>Sin trabajos agregados</h3>
-
-                <p>
-                    Todavía no has agregado trabajos para esta semana.
-                </p>
+        trabajosSemana.innerHTML = `
+            <div class="proyecto-card trabajo-semana-entrada">
+                <div class="proyecto-icono">
+                    <i data-lucide="loader-circle"></i>
+                </div>
+                <div class="proyecto-info">
+                    <h3>Cargando trabajos...</h3>
+                    <p>Estamos consultando los trabajos de esta unidad.</p>
+                </div>
             </div>
         `;
 
-        trabajosSemana.appendChild(sinTrabajos);
+        inicializarIconosLucide();
+
+        let trabajosSubidos = [];
+
+        try {
+            const { data, error } = await supabaseClient
+                .from("trabajos")
+                .select("nombre, descripcion, archivo_url")
+                .eq("semana", numeroSemana)
+                .order("id", { ascending: true });
+
+            if (error) {
+                console.error("Error al leer trabajos:", error);
+            } else if (data) {
+                trabajosSubidos = data.map((t) => ({
+                    nombre: t.nombre,
+                    descripcion: t.descripcion || `Trabajo realizado durante la semana ${numeroSemana}.`,
+                    tipo: "PDF",
+                    archivo: t.archivo_url
+                }));
+
+                cacheSupabasePorSemana[numeroSemana] = trabajosSubidos;
+            }
+        } catch (error) {
+            console.error("No se pudo consultar Supabase:", error);
+        }
+
+        if (semanaSeleccionadaActual !== numeroSemana) return;
+
+        renderizarListaTrabajos([...trabajosLocales, ...trabajosSubidos]);
     }
 
 
-    listaTrabajos.forEach((trabajo) => {
+    function renderizarListaTrabajos(listaTrabajos) {
 
-        const tarjetaTrabajo =
-            document.createElement("div");
+        trabajosSemana.innerHTML = "";
 
-        tarjetaTrabajo.className =
-            "proyecto-card trabajo-semana-entrada";
+        if (listaTrabajos.length === 0) {
 
+            const sinTrabajos = document.createElement("div");
 
-        /*
-        =====================================================
-        IDENTIFICADOR ÚNICO PARA CADA TRABAJO
-        =====================================================
-        */
+            sinTrabajos.className =
+                "proyecto-card trabajo-semana-entrada";
 
-        const identificadorTrabajo =
-            `semana-${numeroSemana}-${trabajo.archivo
-                .toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-z0-9]+/g, "-")
-                .replace(/^-+|-+$/g, "")}`;
+            sinTrabajos.innerHTML = `
+                <div class="proyecto-icono">
+                    <i data-lucide="folder-open"></i>
+                </div>
 
+                <div class="proyecto-info">
+                    <h3>Sin trabajos agregados</h3>
 
-        tarjetaTrabajo.innerHTML = `
+                    <p>
+                        Todavía no has agregado trabajos para esta unidad.
+                    </p>
+                </div>
+            `;
 
-            <div class="proyecto-icono">
-                <i data-lucide="file-text"></i>
-            </div>
+            trabajosSemana.appendChild(sinTrabajos);
+        }
 
 
-            <div class="proyecto-info">
+        listaTrabajos.forEach((trabajo) => {
 
-                <h3>${trabajo.nombre}</h3>
+            const tarjetaTrabajo =
+                document.createElement("div");
 
-                <p>${trabajo.descripcion}</p>
-
-                <span class="proyecto-tipo">
-                    ${trabajo.tipo}
-                </span>
-
-            </div>
+            tarjetaTrabajo.className =
+                "proyecto-card trabajo-semana-entrada";
 
 
-            <div class="proyecto-acciones">
-
-                <a
-                    href="${trabajo.archivo}"
-                    target="_blank"
-                    class="proyecto-boton"
-                >
-                    <i data-lucide="eye"></i>
-                    Ver ${trabajo.tipo}
-                </a>
+            const identificadorTrabajo =
+                `semana-${semanaSeleccionadaActual}-${trabajo.archivo
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9]+/g, "-")
+                    .replace(/^-+|-+$/g, "")}`;
 
 
-                <button
-                    type="button"
-                    class="proyecto-boton boton-comentar"
-                >
-                    <i data-lucide="message-circle"></i>
-                    Comentar
-                </button>
+            tarjetaTrabajo.innerHTML = `
 
-            </div>
+                <div class="proyecto-icono">
+                    <i data-lucide="file-text"></i>
+                </div>
 
 
-            <div
-                class="comentarios-trabajo"
-                style="display: none;"
-            >
+                <div class="proyecto-info">
 
-                <h4>💬 Comentarios de este trabajo</h4>
+                    <h3>${trabajo.nombre}</h3>
 
-                <form class="formulario-comentario">
-                    <input type="text" class="comentario-nombre" placeholder="Tu nombre" maxlength="60" required>
-                    <textarea class="comentario-texto" placeholder="Escribe tu comentario" maxlength="500" rows="3" required></textarea>
-                    <button type="submit" class="proyecto-boton comentario-publicar">
-                        <i data-lucide="send"></i>
-                        Publicar comentario
+                    <p>${trabajo.descripcion}</p>
+
+                    <span class="proyecto-tipo">
+                        ${trabajo.tipo}
+                    </span>
+
+                </div>
+
+
+                <div class="proyecto-acciones">
+
+                    <a
+                        href="${trabajo.archivo}"
+                        target="_blank"
+                        class="proyecto-boton"
+                    >
+                        <i data-lucide="eye"></i>
+                        Ver ${trabajo.tipo}
+                    </a>
+
+
+                    <button
+                        type="button"
+                        class="proyecto-boton boton-comentar"
+                    >
+                        <i data-lucide="message-circle"></i>
+                        Comentar
                     </button>
-                </form>
 
-                <div class="lista-comentarios"></div>
-
-            </div>
-        `;
+                </div>
 
 
-        trabajosSemana.appendChild(tarjetaTrabajo);
+                <div
+                    class="comentarios-trabajo"
+                    style="display: none;"
+                >
+
+                    <h4>💬 Comentarios de este trabajo</h4>
+
+                    <form class="formulario-comentario">
+                        <input type="text" class="comentario-nombre" placeholder="Tu nombre" maxlength="60" required>
+                        <textarea class="comentario-texto" placeholder="Escribe tu comentario" maxlength="500" rows="3" required></textarea>
+                        <button type="submit" class="proyecto-boton comentario-publicar">
+                            <i data-lucide="send"></i>
+                            Publicar comentario
+                        </button>
+                    </form>
+
+                    <div class="lista-comentarios"></div>
+
+                </div>
+            `;
 
 
-        const botonComentar =
-            tarjetaTrabajo.querySelector(".boton-comentar");
+            trabajosSemana.appendChild(tarjetaTrabajo);
 
 
-        const comentariosTrabajo =
-            tarjetaTrabajo.querySelector(".comentarios-trabajo");
+            const botonComentar =
+                tarjetaTrabajo.querySelector(".boton-comentar");
 
 
-        const formularioComentario =
-            tarjetaTrabajo.querySelector(".formulario-comentario");
-        const nombreComentario =
-            tarjetaTrabajo.querySelector(".comentario-nombre");
-        const textoComentario =
-            tarjetaTrabajo.querySelector(".comentario-texto");
-        const listaComentarios =
-            tarjetaTrabajo.querySelector(".lista-comentarios");
-        async function obtenerComentarios() {
-            const respuesta = await fetch(
-                `${SUPABASE_URL}/rest/v1/comentarios?trabajo_id=eq.${encodeURIComponent(identificadorTrabajo)}&select=nombre,comentario,creado_en&order=creado_en.asc`,
-                {
-                    headers: {
-                        apikey: SUPABASE_ANON_KEY,
-                        Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+            const comentariosTrabajo =
+                tarjetaTrabajo.querySelector(".comentarios-trabajo");
+
+
+            const formularioComentario =
+                tarjetaTrabajo.querySelector(".formulario-comentario");
+            const nombreComentario =
+                tarjetaTrabajo.querySelector(".comentario-nombre");
+            const textoComentario =
+                tarjetaTrabajo.querySelector(".comentario-texto");
+            const listaComentarios =
+                tarjetaTrabajo.querySelector(".lista-comentarios");
+            async function obtenerComentarios() {
+                const respuesta = await fetch(
+                    `${SUPABASE_URL}/rest/v1/comentarios?trabajo_id=eq.${encodeURIComponent(identificadorTrabajo)}&select=nombre,comentario,creado_en&order=creado_en.asc`,
+                    {
+                        headers: {
+                            apikey: SUPABASE_ANON_KEY,
+                            Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+                        }
                     }
-                }
-            );
-
-            if (!respuesta.ok) {
-                throw new Error("No se pudieron cargar los comentarios.");
-            }
-
-            return respuesta.json();
-        }
-
-        async function mostrarComentarios() {
-            listaComentarios.innerHTML = "";
-
-            let comentarios;
-
-            try {
-                comentarios = await obtenerComentarios();
-            } catch (error) {
-                listaComentarios.textContent = "No se pudieron cargar los comentarios.";
-                return;
-            }
-
-            comentarios.forEach((comentario) => {
-                const elemento = document.createElement("article");
-                elemento.className = "comentario-publicado";
-
-                const cabecera = document.createElement("div");
-                cabecera.className = "comentario-cabecera";
-
-                const nombre = document.createElement("strong");
-                nombre.textContent = comentario.nombre;
-
-                const fecha = document.createElement("time");
-                fecha.textContent = new Intl.DateTimeFormat("es", {
-                    dateStyle: "medium",
-                    timeStyle: "short"
-                }).format(new Date(comentario.creado_en));
-
-                const texto = document.createElement("p");
-                texto.textContent = comentario.comentario;
-
-                cabecera.append(nombre, fecha);
-                elemento.append(cabecera, texto);
-                listaComentarios.appendChild(elemento);
-            });
-        }
-
-        mostrarComentarios();
-
-        formularioComentario.addEventListener("submit", async (evento) => {
-            evento.preventDefault();
-
-            const nombre = nombreComentario.value.trim();
-            const texto = textoComentario.value.trim();
-
-            if (!nombre || !texto) return;
-
-            const botonPublicar = formularioComentario.querySelector("button");
-            botonPublicar.disabled = true;
-
-            try {
-                const respuesta = await fetch(`${SUPABASE_URL}/rest/v1/comentarios`, {
-                    method: "POST",
-                    headers: {
-                        apikey: SUPABASE_ANON_KEY,
-                        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-                        "Content-Type": "application/json",
-                        Prefer: "return=minimal"
-                    },
-                    body: JSON.stringify({
-                        trabajo_id: identificadorTrabajo,
-                        nombre,
-                        comentario: texto
-                    })
-                });
+                );
 
                 if (!respuesta.ok) {
-                    listaComentarios.textContent = "No se pudo publicar el comentario.";
+                    throw new Error("No se pudieron cargar los comentarios.");
+                }
+
+                return respuesta.json();
+            }
+
+            async function mostrarComentarios() {
+                listaComentarios.innerHTML = "";
+
+                let comentarios;
+
+                try {
+                    comentarios = await obtenerComentarios();
+                } catch (error) {
+                    listaComentarios.textContent = "No se pudieron cargar los comentarios.";
                     return;
                 }
 
-                formularioComentario.reset();
-                await mostrarComentarios();
-            } catch (error) {
-                listaComentarios.textContent = "No se pudo conectar con el servidor.";
-            } finally {
-                botonPublicar.disabled = false;
+                comentarios.forEach((comentario) => {
+                    const elemento = document.createElement("article");
+                    elemento.className = "comentario-publicado";
+
+                    const cabecera = document.createElement("div");
+                    cabecera.className = "comentario-cabecera";
+
+                    const nombre = document.createElement("strong");
+                    nombre.textContent = comentario.nombre;
+
+                    const fecha = document.createElement("time");
+                    fecha.textContent = new Intl.DateTimeFormat("es", {
+                        dateStyle: "medium",
+                        timeStyle: "short"
+                    }).format(new Date(comentario.creado_en));
+
+                    const texto = document.createElement("p");
+                    texto.textContent = comentario.comentario;
+
+                    cabecera.append(nombre, fecha);
+                    elemento.append(cabecera, texto);
+                    listaComentarios.appendChild(elemento);
+                });
             }
+
+            mostrarComentarios();
+
+            formularioComentario.addEventListener("submit", async (evento) => {
+                evento.preventDefault();
+
+                const nombre = nombreComentario.value.trim();
+                const texto = textoComentario.value.trim();
+
+                if (!nombre || !texto) return;
+
+                const botonPublicar = formularioComentario.querySelector("button");
+                botonPublicar.disabled = true;
+
+                try {
+                    const respuesta = await fetch(`${SUPABASE_URL}/rest/v1/comentarios`, {
+                        method: "POST",
+                        headers: {
+                            apikey: SUPABASE_ANON_KEY,
+                            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+                            "Content-Type": "application/json",
+                            Prefer: "return=minimal"
+                        },
+                        body: JSON.stringify({
+                            trabajo_id: identificadorTrabajo,
+                            nombre,
+                            comentario: texto
+                        })
+                    });
+
+                    if (!respuesta.ok) {
+                        listaComentarios.textContent = "No se pudo publicar el comentario.";
+                        return;
+                    }
+
+                    formularioComentario.reset();
+                    await mostrarComentarios();
+                } catch (error) {
+                    listaComentarios.textContent = "No se pudo conectar con el servidor.";
+                } finally {
+                    botonPublicar.disabled = false;
+                }
+            });
+
+
+            botonComentar.addEventListener("click", async () => {
+
+                const comentariosOcultos =
+                    comentariosTrabajo.style.display === "none";
+
+
+                if (comentariosOcultos) {
+
+                    comentariosTrabajo.style.display = "block";
+
+                    await mostrarComentarios();
+
+
+                    botonComentar.innerHTML = `
+                        <i data-lucide="message-circle-off"></i>
+                        Ocultar comentarios
+                    `;
+
+                    inicializarIconosLucide();
+
+                } else {
+
+                    comentariosTrabajo.style.display = "none";
+
+
+                    botonComentar.innerHTML = `
+                        <i data-lucide="message-circle"></i>
+                        Comentar
+                    `;
+
+
+                    inicializarIconosLucide();
+
+                }
+
+            });
+
         });
 
 
-        /*
-        =====================================================
-        BOTÓN COMENTAR
-        =====================================================
-        */
-
-        botonComentar.addEventListener("click", async () => {
-
-            const comentariosOcultos =
-                comentariosTrabajo.style.display === "none";
-
-
-            if (comentariosOcultos) {
-
-                /*
-                MOSTRAR PANEL
-                */
-
-                comentariosTrabajo.style.display = "block";
-
-                await mostrarComentarios();
-
-
-                botonComentar.innerHTML = `
-                    <i data-lucide="message-circle-off"></i>
-                    Ocultar comentarios
-                `;
-
-                inicializarIconosLucide();
-
-            } else {
-
-                /*
-                OCULTAR PANEL
-                */
-
-                comentariosTrabajo.style.display = "none";
-
-
-                botonComentar.innerHTML = `
-                    <i data-lucide="message-circle"></i>
-                    Comentar
-                `;
-
-
-                inicializarIconosLucide();
-
-            }
-
-        });
-
-    });
-
-
-    
-
-    inicializarIconosLucide();
-
-
-    /*
-    =====================================================
-    CAMBIAR DE LISTA DE SEMANAS A VISTA DE SEMANA
-    =====================================================
-    */
-
-    listaSemanas.style.display = "none";
-
-
-    vistaSemana.classList.remove(
-        "vista-semana-oculta"
-    );
-
-
-    vistaSemana.classList.add(
-        "vista-semana-activa"
-    );
-
-
-    scrollContenidoAlTope();
-
-}
-
-
-
+        inicializarIconosLucide();
+    }
 
 
     botonRegresar.addEventListener("click", () => {

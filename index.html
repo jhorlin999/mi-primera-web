@@ -3,14 +3,15 @@
 
 <head>
 
-
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-    <title>Mi espacio de aprendizaje</title>
+    <title>BLOGGER-UNSM FISI </title>
+
+    <!-- ICONO DE LA PESTAÑA -->
+    <link rel="icon" type="image/png" href="archivos/galeria/1234unsm.png">
 
     <link rel="stylesheet" href="style.css?v=8">
 
@@ -21,7 +22,6 @@
             defer></script>
 
 </head>
-
 
 <body>
 
@@ -287,20 +287,12 @@
 
             <p class="frase texto-interactivo">
 
-                Lo maravilloso de aprender es que nadie puede
-                arrebatártelo.
-
+               The wonderful thing about learning is that no one can
+                take it away from you.
             </p>
 
 
-            <p class="descripcion texto-interactivo">
-
-                Este portafolio reúne mi progreso, mis actividades
-                y los conocimientos adquiridos durante mi formación
-                académica.
-
-            </p>
-
+        
 
             <!-- =================================================
                  ÚNICO ACCESO A LA SEGUNDA SECCIÓN
@@ -414,9 +406,9 @@
             <!-- TÍTULO DE SECCIÓN -->
             <div class="dashboard-header">
                 <div class="header-text">
-                    <h1>JHORLIN HEINER 
-                        ALFARO PERALTA</h1>
-                    <p>Bienvenido a mi blog</p>
+                    <h1>BIENVENIDO A MI BLOG 
+                        </h1>
+                    <p>ESTUDIANTE DE ING DE SISTEMAS </p>
                 </div>
             </div>
 
@@ -624,8 +616,8 @@
 </div>
                 <!-- Tarjeta de Estadísticas -->
                 <div class="card card-stats">
-                    <h3>DOCENTE</h3>
-                    <div class="stat-number">Ing. Dr. Alva Arévalo Alberto</div>
+                    <h3>DOCENTE:</h3>
+                    <div class="stat-number">Dr. Alva Arévalo Alberto</div>
                     <div class="wave-chart">
                         <div class="bar bar-1"></div>
                         <div class="bar bar-2"></div>
@@ -635,16 +627,29 @@
                     </div>
                 </div>
 
+        
+
                 
                 <!-- Tarjeta Cronograma / Actividad -->
                 <div class="card card-timeline">
 
-                    <h3>CURSO</h3>
+                    <h3>CURSO: </h3>
                     <div class="stat-number">Teoría General de Sistemas</div>
                     <div class="progress-bar-container">
                         <div class="progress-fill"></div>
                     </div>
                 </div>
+
+<!-- Tarjeta separada -->
+<div class="card card-stats tarjeta-gaming">
+    <h3>ESTUDIANTE:</h3>
+
+    <div class="stat-number">
+        JHORLIN HEINER ALFARO PERALTA
+    </div>
+
+    
+
 
             </div>
         </main>
@@ -698,91 +703,34 @@
     </script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const boton = document.getElementById('boton-nuevo-proyecto');
-        const modal = document.getElementById('modal-proyecto');
-        const acceso = document.getElementById('formulario-acceso-proyecto');
-        const formulario = document.getElementById('formulario-nuevo-proyecto');
-        const estado = document.getElementById('estado-proyecto');
-        const cerrar = document.getElementById('cerrar-modal-proyecto');
-        const cerrarSesion = document.getElementById('cerrar-sesion-proyecto');
+document.addEventListener('DOMContentLoaded', function () {
 
-        if (!boton || !modal || !acceso || !formulario || !estado) return;
+    var boton = document.getElementById('boton-explorar');
+    var seccion2 = document.getElementById('seccion-2');
 
-        const mostrarLogin = function () {
-            modal.classList.add('activo');
-            acceso.hidden = false;
-            acceso.style.display = 'grid';
-            formulario.hidden = true;
-            formulario.style.display = 'none';
-            estado.textContent = 'Inicia sesión para subir un trabajo.';
-            acceso.reset();
-            formulario.reset();
-        };
+    function irASeccion2() {
+        if (!seccion2) return;
 
-        const mostrarSubida = function () {
-            acceso.hidden = true;
-            acceso.style.display = 'none';
-            formulario.hidden = false;
-            formulario.style.display = 'grid';
-            estado.textContent = 'Sesión iniciada. Ya puedes subir un PDF.';
-        };
+        seccion2.scrollIntoView({ behavior: 'auto', block: 'start' });
 
-        boton.addEventListener('click', function () {
-            mostrarLogin();
+        setTimeout(function () {
+            seccion2.scrollIntoView({ behavior: 'auto', block: 'start' });
+        }, 150);
+    }
+
+    if (boton) {
+        boton.addEventListener('click', function (e) {
+            e.preventDefault();
+            irASeccion2();
         });
+    }
 
-        if (cerrar) {
-            cerrar.addEventListener('click', function () {
-                modal.classList.remove('activo');
-            });
-        }
+    if (window.location.hash === '#seccion-2') {
+        setTimeout(irASeccion2, 300);
+    }
 
-        if (cerrarSesion) {
-            cerrarSesion.addEventListener('click', function () {
-                if (window.supabase && window.supabase.auth) {
-                    window.supabase.auth.signOut();
-                }
-                mostrarLogin();
-            });
-        }
-
-        acceso.addEventListener('submit', async function (evento) {
-            evento.preventDefault();
-            const correo = document.getElementById('correo-proyecto').value.trim();
-            const contrasena = document.getElementById('contrasena-proyecto').value;
-
-            if (!correo || !contrasena) {
-                estado.textContent = 'Debes ingresar tu correo y contraseña.';
-                return;
-            }
-
-            if (!window.supabase || !window.supabase.auth) {
-                estado.textContent = 'No se pudo conectar al sistema de acceso.';
-                return;
-            }
-
-            try {
-                const resultado = await window.supabase.auth.signInWithPassword({
-                    email: correo,
-                    password: contrasena
-                });
-
-                if (resultado.error) {
-                    estado.textContent = 'Correo o contraseña incorrectos.';
-                    acceso.reset();
-                    return;
-                }
-
-                mostrarSubida();
-                acceso.reset();
-            } catch (error) {
-                estado.textContent = 'Correo o contraseña incorrectos.';
-                acceso.reset();
-            }
-        });
-    });
-    </script>
+});
+</script>
 
 </body>
 </html>
