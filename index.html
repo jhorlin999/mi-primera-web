@@ -367,7 +367,7 @@
         <!-- BARRA DE NAVEGACIÓN LATERAL (NAVBAR) -->
         <aside class="sidebar">
             <div class="brand">
-                <i data-lucide="orbit" class="brand-icon"></i>
+                <img src="archivos/galeria/1234unsm.png" class="brand-icon" alt="Escudo de la Universidad Nacional de San Martín">
                 <h2>JHORLIN</h2>
             </div>
 
@@ -398,7 +398,7 @@
                     <button class="icon-btn"><i data-lucide="mail"></i></button>
                     <button class="icon-btn"><i data-lucide="bell"></i></button>
                     <div class="user-profile">
-                        <img src="alfarito.jpeg" alt="Usuario">
+                        <img src="alfarito.jpeg" alt="Retrato de Jhorlin Heiner Alfaro Peralta">
                     </div>
                 </div>
             </header>
@@ -449,8 +449,8 @@
              SE GENERAN AUTOMÁTICAMENTE CON JAVASCRIPT
         ================================================== -->
 
-        <div id="contenedor-semanas"></div>
-
+        <div class="lista-semanas-layout">
+            <div id="contenedor-semanas"></div>
 
         <!-- =================================================
              BOTONES MOSTRAR MÁS / MOSTRAR MENOS
@@ -478,6 +478,7 @@
 
             </button>
 
+        </div>
         </div>
 
     </div>
@@ -576,12 +577,56 @@
     </div>
 </div>
 
-
+<dialog class="visor-documento" id="visor-documento" aria-labelledby="titulo-visor-documento">
+    <div class="visor-documento-contenido">
+        <header class="visor-documento-barra">
+            <div class="visor-documento-titulo">
+                <i data-lucide="file-text" aria-hidden="true"></i>
+                <h2 id="titulo-visor-documento">Documento PDF</h2>
+            </div>
+            <div class="visor-documento-acciones">
+                <a class="visor-documento-abrir" id="abrir-documento-externo" href="#" target="_blank" rel="noopener">
+                    <i data-lucide="external-link" aria-hidden="true"></i>
+                    Abrir aparte
+                </a>
+                <button class="visor-documento-cerrar" id="cerrar-visor-documento" type="button" aria-label="Cerrar visor">
+                    <i data-lucide="x" aria-hidden="true"></i>
+                </button>
+            </div>
+        </header>
+        <div class="visor-documento-marco">
+            <iframe id="marco-documento" title="Vista previa del documento PDF"></iframe>
+        </div>
+    </div>
+</dialog>
 
             <!-- GRID DE TARJETAS Y CONTENIDO -->
             <div class="dashboard-grid">
 
-                
+                <aside class="perfil-academico" aria-label="Bitácora académica">
+                    <div class="perfil-academico-persona">
+                        <img src="alfarito.jpeg" alt="Retrato de Jhorlin Heiner Alfaro Peralta">
+                        <div>
+                            <span class="perfil-academico-etiqueta">BITÁCORA ACADÉMICA</span>
+                            <h3>Jhorlin Heiner Alfaro Peralta</h3>
+                            <p>Estudiante de Ingeniería de Sistemas</p>
+                        </div>
+                    </div>
+
+                    <div class="perfil-academico-dato">
+                        <span><i data-lucide="book-open" aria-hidden="true"></i> Curso</span>
+                        <strong>Teoría General de Sistemas</strong>
+                    </div>
+                    <div class="perfil-academico-dato">
+                        <span><i data-lucide="user-round" aria-hidden="true"></i> Docente</span>
+                        <strong>Dr. Alva Arévalo Alberto</strong>
+                    </div>
+                    <div class="perfil-academico-dato perfil-academico-periodo">
+                        <span><i data-lucide="calendar-days" aria-hidden="true"></i> Periodo</span>
+                        <strong>2026-II</strong>
+                    </div>
+                </aside>
+
                 <!-- Tarjeta Principal (Hero/Preview) -->
 
 <div class="card card-hero">
@@ -601,136 +646,17 @@
                     class="logo-fisi"
                 >
 
-                <!-- Rayos -->
-                <div class="lightning lightning-left"></div>
-                <div class="lightning lightning-right"></div>
-
-                <div class="lightning lightning-left lightning-small"></div>
-                <div class="lightning lightning-right lightning-small"></div>
-
             </div>
 
         </div>
 
     </div>
+<canvas class="lightning-canvas" aria-hidden="true"></canvas>
 </div>
-                <!-- Tarjeta de Estadísticas -->
-                <div class="card card-stats">
-                    <h3>DOCENTE:</h3>
-                    <div class="stat-number">Dr. Alva Arévalo Alberto</div>
-                    <div class="wave-chart">
-                        <div class="bar bar-1"></div>
-                        <div class="bar bar-2"></div>
-                        <div class="bar bar-3"></div>
-                        <div class="bar bar-4"></div>
-                        <div class="bar bar-5"></div>
-                    </div>
-                </div>
-
-        
-
-                
-                <!-- Tarjeta Cronograma / Actividad -->
-                <div class="card card-timeline">
-
-                    <h3>CURSO: </h3>
-                    <div class="stat-number">Teoría General de Sistemas</div>
-                    <div class="progress-bar-container">
-                        <div class="progress-fill"></div>
-                    </div>
-                </div>
-
-<!-- Tarjeta separada -->
-<div class="card card-stats tarjeta-gaming">
-    <h3>ESTUDIANTE:</h3>
-
-    <div class="stat-number">
-        JHORLIN HEINER ALFARO PERALTA
-    </div>
-
-    
-
-
             </div>
         </main>
     </div>
 
-
-    <!-- =====================================================
-         CORRECCIÓN DE SCROLL EN MÓVILES
-         Al tocar "Explorar", forzamos que la Sección 2 (con la
-         barra de navegación) quede completamente visible, sin
-         importar que la barra de direcciones del navegador se
-         oculte/aparezca a mitad del scroll (eso es lo que antes
-         "cortaba" la barra de navegación en el celular).
-    ====================================================== -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-
-        var boton = document.getElementById('boton-explorar');
-        var seccion2 = document.getElementById('seccion-2');
-
-        function irASeccion2() {
-            if (!seccion2) return;
-
-            seccion2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-            // La barra de direcciones del navegador puede
-            // ocultarse DURANTE el scroll, cambiando el alto real
-            // de la pantalla a mitad de camino. Por eso volvemos a
-            // alinear la sección una vez que esa animación ya
-            // terminó, para corregir cualquier desfase.
-            setTimeout(function () {
-                seccion2.scrollIntoView({ behavior: 'auto', block: 'start' });
-            }, 550);
-        }
-
-        if (boton) {
-            boton.addEventListener('click', function (e) {
-                e.preventDefault();
-                irASeccion2();
-            });
-        }
-
-        // También corregimos si el usuario entra directamente con
-        // el link #seccion-2 (por ejemplo, recargando la página
-        // estando ya en esa sección).
-        if (window.location.hash === '#seccion-2') {
-            setTimeout(irASeccion2, 300);
-        }
-
-    });
-    </script>
-
-    <script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    var boton = document.getElementById('boton-explorar');
-    var seccion2 = document.getElementById('seccion-2');
-
-    function irASeccion2() {
-        if (!seccion2) return;
-
-        seccion2.scrollIntoView({ behavior: 'auto', block: 'start' });
-
-        setTimeout(function () {
-            seccion2.scrollIntoView({ behavior: 'auto', block: 'start' });
-        }, 150);
-    }
-
-    if (boton) {
-        boton.addEventListener('click', function (e) {
-            e.preventDefault();
-            irASeccion2();
-        });
-    }
-
-    if (window.location.hash === '#seccion-2') {
-        setTimeout(irASeccion2, 300);
-    }
-
-});
-</script>
 
 </body>
 </html>

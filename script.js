@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     activarMenuSeccion2();
     activarBotonProyectos();
     inicializarGestorProyectos();
+    inicializarVisorDocumentos();
     configurarScrollSeccion2();
     inicializarIconosLucide();
     inicializarChatbotJhorlin();
@@ -84,6 +85,47 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarSistemaSemanas();
 
 });
+
+
+function inicializarVisorDocumentos() {
+    const visor = document.getElementById("visor-documento");
+    const marco = document.getElementById("marco-documento");
+    const titulo = document.getElementById("titulo-visor-documento");
+    const enlaceExterno = document.getElementById("abrir-documento-externo");
+    const botonCerrar = document.getElementById("cerrar-visor-documento");
+    const seccion = document.getElementById("seccion-2");
+
+    if (!visor || !marco || !titulo || !enlaceExterno || !botonCerrar || !seccion) return;
+
+    seccion.addEventListener("click", (evento) => {
+        const objetivo = evento.target instanceof Element
+            ? evento.target.closest(".boton-ver-documento")
+            : null;
+
+        if (!objetivo || typeof visor.showModal !== "function") return;
+
+        evento.preventDefault();
+
+        const tarjeta = objetivo.closest(".proyecto-card");
+        const nombreDocumento = tarjeta?.querySelector(".proyecto-info h3")?.textContent.trim();
+
+        titulo.textContent = nombreDocumento || "Documento PDF";
+        enlaceExterno.href = objetivo.href;
+        marco.src = objetivo.href;
+        visor.showModal();
+        inicializarIconosLucide();
+    });
+
+    botonCerrar.addEventListener("click", () => visor.close());
+
+    visor.addEventListener("click", (evento) => {
+        if (evento.target === visor) visor.close();
+    });
+
+    visor.addEventListener("close", () => {
+        marco.src = "about:blank";
+    });
+}
 
 
 function inicializarGestorProyectos() {
@@ -329,6 +371,8 @@ function procesarContenido(elemento) {
 
 
 function activarMovimientoTexto() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const elementos = document.querySelectorAll(".texto-interactivo");
 
     elementos.forEach((elemento) => {
@@ -365,6 +409,8 @@ function activarMovimientoTexto() {
 
 
 function activarMovimientoLetrasTitulo() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const titulo = document.getElementById("titulo-principal");
     if (!titulo) return;
 
@@ -417,6 +463,7 @@ function activarTarjetaColgante() {
 
     if (!pivote || !contenedorLogo) return;
     if (window.matchMedia("(pointer: coarse)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     if (contenedorLogo.parentElement) {
         contenedorLogo.parentElement.style.perspective = "1000px";
@@ -588,6 +635,10 @@ function activarTransicionExplorar() {
             window.scrollTo(0, 0);
         }, 500);
     });
+
+    if (window.location.hash === "#seccion-2") {
+        botonExplorar.click();
+    }
 }
 
 
@@ -1036,6 +1087,7 @@ function activarParallaxCardHero() {
 
     if (!heroCard || !pulsingCircle) return;
     if (window.matchMedia("(pointer: coarse)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let cuadroPendiente = false;
     let ultimoEvento = null;
@@ -1153,42 +1205,182 @@ function activarBotonProyectos() {
 
 
 function activarRayosFisi() {
-    const rayos = document.querySelectorAll(".lightning");
-    if (!rayos.length) return;
+    const heroCard = document.querySelector("#seccion-2 .card-hero");
+    const canvas = heroCard?.querySelector(".lightning-canvas");
+    const context = canvas?.getContext("2d");
 
-    const heroCard = document.querySelector(".card-hero");
+    if (!heroCard || !canvas || !context) return;
 
-    let rayosActivos = true;
-    const temporizadores = [];
+    const movimientoReducido = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const objetivo = { x: 0, y: 0 };
+    const duracionExplosion = 520;
+    let anchoCanvas = 0;
+    let altoCanvas = 0;
+    let frameId = 0;
+    let ultimoDibujo = 0;
+    let mouseDentro = false;
+    let explosionInicio = 0;
+    let explosionFin = 0;
 
-    function programarRayo(rayo) {
-        const id = setTimeout(() => {
-            if (rayosActivos) {
-                const rotacion = Math.random() * 12 - 6;
-                const desplazamiento = Math.random() * 10 - 5;
-                const escala = 0.85 + Math.random() * 0.35;
+    function ajustarCanvas() {
+        const rectangulo = heroCard.getBoundingClientRect();
+        const escala = Math.min(window.devicePixelRatio || 1, 2);
 
-                rayo.style.setProperty("--rayo-rotacion", `${rotacion}deg`);
-                rayo.style.setProperty("--rayo-desplazamiento", `${desplazamiento}px`);
-                rayo.style.setProperty("--rayo-escala", escala);
-            }
-
-            programarRayo(rayo);
-        }, 700 + Math.random() * 900);
-
-        temporizadores.push(id);
+        anchoCanvas = rectangulo.width;
+        altoCanvas = rectangulo.height;
+        canvas.width = Math.round(anchoCanvas * escala);
+        canvas.height = Math.round(altoCanvas * escala);
+        context.setTransform(escala, 0, 0, escala, 0, 0);
     }
 
-    rayos.forEach(programarRayo);
+    function actualizarObjetivo(evento) {
+        const rectangulo = canvas.getBoundingClientRect();
+        objetivo.x = evento.clientX - rectangulo.left;
+        objetivo.y = evento.clientY - rectangulo.top;
+    }
 
-    if (heroCard && "IntersectionObserver" in window) {
-        const observadorRayos = new IntersectionObserver((entradas) => {
-            entradas.forEach((entrada) => {
-                rayosActivos = entrada.isIntersecting;
-            });
-        }, { threshold: 0 });
+    function dibujarRayo(inicioX, inicioY, finX, finY, desplazamiento, profundidad = 0, permitirRama = true) {
+        if (desplazamiento < 2 || profundidad >= 7) {
+            context.beginPath();
+            context.moveTo(inicioX, inicioY);
+            context.lineTo(finX, finY);
+            context.stroke();
+            return;
+        }
 
-        observadorRayos.observe(heroCard);
+        const medioX = (inicioX + finX) / 2 + (Math.random() - 0.5) * desplazamiento;
+        const medioY = (inicioY + finY) / 2 + (Math.random() - 0.5) * desplazamiento;
+
+        dibujarRayo(inicioX, inicioY, medioX, medioY, desplazamiento / 2, profundidad + 1, permitirRama);
+        dibujarRayo(medioX, medioY, finX, finY, desplazamiento / 2, profundidad + 1, permitirRama);
+
+        if (permitirRama && profundidad === 2 && Math.random() < 0.38) {
+            const ramaX = medioX + (Math.random() - 0.5) * desplazamiento * 2;
+            const ramaY = medioY + (Math.random() - 0.5) * desplazamiento * 2;
+            dibujarRayo(medioX, medioY, ramaX, ramaY, desplazamiento * 0.45, profundidad + 1, false);
+        }
+    }
+
+    function dibujarExplosion(tiempo) {
+        const progreso = Math.min(1, (tiempo - explosionInicio) / duracionExplosion);
+        const expansion = 1 - Math.pow(1 - progreso, 2);
+        const intensidad = 1 - progreso;
+        const centroX = anchoCanvas / 2;
+        const centroY = altoCanvas / 2;
+        const radio = 14 + Math.hypot(anchoCanvas, altoCanvas) * 0.62 * expansion;
+
+        context.save();
+        context.globalAlpha = intensidad;
+        context.shadowBlur = 18;
+        context.shadowColor = "#48cae4";
+
+        for (let rayo = 0; rayo < 12; rayo++) {
+            const angulo = (Math.PI * 2 * rayo) / 12;
+            const finX = centroX + Math.cos(angulo) * radio;
+            const finY = centroY + Math.sin(angulo) * radio;
+
+            context.strokeStyle = rayo % 3 === 0
+                ? "rgba(185, 142, 255, 0.92)"
+                : "rgba(125, 228, 255, 0.95)";
+            context.lineWidth = rayo % 3 === 0 ? 1.1 : 1.5;
+            dibujarRayo(centroX, centroY, finX, finY, 24 * (1 - progreso * 0.45));
+        }
+
+        context.beginPath();
+        context.arc(centroX, centroY, 18 + 30 * expansion, 0, Math.PI * 2);
+        context.strokeStyle = "rgba(220, 249, 255, 0.8)";
+        context.lineWidth = 1.2;
+        context.stroke();
+        context.restore();
+    }
+
+    function animar(tiempo) {
+        frameId = 0;
+        if (!mouseDentro && tiempo >= explosionFin) {
+            limpiarCanvas();
+            return;
+        }
+
+        frameId = requestAnimationFrame(animar);
+        if (tiempo - ultimoDibujo < 1000 / 30) return;
+        ultimoDibujo = tiempo;
+
+        context.clearRect(0, 0, anchoCanvas, altoCanvas);
+        context.save();
+        context.globalCompositeOperation = "lighter";
+        context.shadowColor = "#48cae4";
+
+        if (mouseDentro) {
+            for (let rama = 0; rama < 3; rama++) {
+                const separacion = (rama - 1) * 4;
+                context.strokeStyle = rama === 1
+                    ? "rgba(150, 238, 255, 0.95)"
+                    : "rgba(76, 201, 240, 0.62)";
+                context.lineWidth = rama === 1 ? 1.5 : 0.85;
+                context.shadowBlur = rama === 1 ? 14 : 9;
+                dibujarRayo(
+                    anchoCanvas / 2,
+                    altoCanvas / 2,
+                    objetivo.x + separacion,
+                    objetivo.y - separacion,
+                    28
+                );
+            }
+        }
+
+        if (tiempo < explosionFin) dibujarExplosion(tiempo);
+        context.restore();
+    }
+
+    function iniciar(evento) {
+        if (movimientoReducido.matches) return;
+
+        ajustarCanvas();
+        actualizarObjetivo(evento);
+        mouseDentro = true;
+        heroCard.classList.add("rayos-activos");
+        solicitarAnimacion();
+    }
+
+    function solicitarAnimacion() {
+        if (frameId) return;
+        ultimoDibujo = 0;
+        frameId = requestAnimationFrame(animar);
+    }
+
+    function limpiarCanvas() {
+        if (mouseDentro || performance.now() < explosionFin) return;
+
+        heroCard.classList.remove("rayos-activos");
+        context.clearRect(0, 0, anchoCanvas, altoCanvas);
+    }
+
+    function salir() {
+        mouseDentro = false;
+        if (performance.now() >= explosionFin) limpiarCanvas();
+    }
+
+    function explotar(evento) {
+        if (movimientoReducido.matches) return;
+
+        ajustarCanvas();
+        actualizarObjetivo(evento);
+        explosionInicio = performance.now();
+        explosionFin = explosionInicio + duracionExplosion;
+        heroCard.classList.add("rayos-activos");
+        solicitarAnimacion();
+    }
+
+    heroCard.addEventListener("mouseenter", iniciar);
+    heroCard.addEventListener("mousemove", actualizarObjetivo);
+    heroCard.addEventListener("mouseleave", salir);
+    heroCard.addEventListener("click", explotar);
+
+    if ("ResizeObserver" in window) {
+        new ResizeObserver(ajustarCanvas).observe(heroCard);
+    } else {
+        window.addEventListener("resize", ajustarCanvas);
+        ajustarCanvas();
     }
 }
 
@@ -1213,7 +1405,8 @@ function inicializarSistemaSemanas() {
     const semanaInicial = 1;
     const semanaFinal = 3;
     const semanasPorPagina = 3;
-    let semanasMostradas = semanaInicial;
+    const vistaEscritorio = window.matchMedia("(min-width: 901px)");
+    let semanasMostradas = vistaEscritorio.matches ? semanaFinal : semanaInicial;
 
     const trabajos = {
         1: [
@@ -1431,78 +1624,126 @@ function inicializarSistemaSemanas() {
                 "proyecto-card trabajo-semana-entrada";
 
 
+            const rutaArchivo = typeof trabajo.archivo === "string"
+                ? trabajo.archivo.trim()
+                : "";
+            const nombreArchivo = rutaArchivo
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-+|-+$/g, "") || "sin-archivo";
             const identificadorTrabajo =
-                `semana-${semanaSeleccionadaActual}-${trabajo.archivo
-                    .toLowerCase()
-                    .normalize("NFD")
-                    .replace(/[\u0300-\u036f]/g, "")
-                    .replace(/[^a-z0-9]+/g, "-")
-                    .replace(/^-+|-+$/g, "")}`;
+                `semana-${semanaSeleccionadaActual}-${nombreArchivo}`;
+            const tipoTrabajo = String(trabajo.tipo ?? "PDF");
 
+            let urlArchivo = null;
+            try {
+                const url = new URL(rutaArchivo, document.baseURI);
+                if (["http:", "https:", "file:"].includes(url.protocol)) {
+                    urlArchivo = url.href;
+                }
+            } catch (error) {
+                console.warn("URL de trabajo no válida:", error);
+            }
 
-            tarjetaTrabajo.innerHTML = `
+            const iconoTrabajo = document.createElement("div");
+            iconoTrabajo.className = "proyecto-icono";
 
-                <div class="proyecto-icono">
-                    <i data-lucide="file-text"></i>
-                </div>
+            const imagenEscudo = document.createElement("img");
+            imagenEscudo.src = "archivos/galeria/1234unsm.png";
+            imagenEscudo.alt = "";
+            imagenEscudo.setAttribute("aria-hidden", "true");
+            iconoTrabajo.appendChild(imagenEscudo);
 
+            const informacionTrabajo = document.createElement("div");
+            informacionTrabajo.className = "proyecto-info";
 
-                <div class="proyecto-info">
+            const tituloTrabajo = document.createElement("h3");
+            tituloTrabajo.textContent = String(trabajo.nombre ?? "Trabajo sin título");
 
-                    <h3>${trabajo.nombre}</h3>
+            const descripcionTrabajo = document.createElement("p");
+            descripcionTrabajo.textContent = String(trabajo.descripcion ?? "");
 
-                    <p>${trabajo.descripcion}</p>
+            const etiquetaTipo = document.createElement("span");
+            etiquetaTipo.className = "proyecto-tipo";
+            etiquetaTipo.textContent = tipoTrabajo;
+            informacionTrabajo.append(tituloTrabajo, descripcionTrabajo, etiquetaTipo);
 
-                    <span class="proyecto-tipo">
-                        ${trabajo.tipo}
-                    </span>
+            const accionesTrabajo = document.createElement("div");
+            accionesTrabajo.className = "proyecto-acciones";
 
-                </div>
+            const enlaceDocumento = document.createElement(urlArchivo ? "a" : "span");
+            enlaceDocumento.className = "proyecto-boton boton-ver-documento";
+            if (urlArchivo) {
+                enlaceDocumento.href = urlArchivo;
+                enlaceDocumento.target = "_blank";
+                enlaceDocumento.rel = "noopener";
+            } else {
+                enlaceDocumento.setAttribute("aria-disabled", "true");
+            }
 
+            const iconoDocumento = document.createElement("i");
+            iconoDocumento.setAttribute("data-lucide", "eye");
+            enlaceDocumento.append(iconoDocumento, document.createTextNode(` Ver ${tipoTrabajo}`));
 
-                <div class="proyecto-acciones">
+            const botonComentarNuevo = document.createElement("button");
+            botonComentarNuevo.type = "button";
+            botonComentarNuevo.className = "proyecto-boton boton-comentar";
+            const iconoComentario = document.createElement("i");
+            iconoComentario.setAttribute("data-lucide", "message-circle");
+            botonComentarNuevo.append(iconoComentario, document.createTextNode(" Comentar"));
+            accionesTrabajo.append(enlaceDocumento, botonComentarNuevo);
 
-                    <a
-                        href="${trabajo.archivo}"
-                        target="_blank"
-                        class="proyecto-boton"
-                    >
-                        <i data-lucide="eye"></i>
-                        Ver ${trabajo.tipo}
-                    </a>
+            const comentariosTrabajoNuevo = document.createElement("div");
+            comentariosTrabajoNuevo.className = "comentarios-trabajo";
+            comentariosTrabajoNuevo.style.display = "none";
 
+            const tituloComentarios = document.createElement("h4");
+            const iconoComentarios = document.createElement("i");
+            iconoComentarios.setAttribute("data-lucide", "messages-square");
+            iconoComentarios.setAttribute("aria-hidden", "true");
+            tituloComentarios.append(iconoComentarios, document.createTextNode(" Comentarios de este trabajo"));
 
-                    <button
-                        type="button"
-                        class="proyecto-boton boton-comentar"
-                    >
-                        <i data-lucide="message-circle"></i>
-                        Comentar
-                    </button>
+            const formularioNuevoComentario = document.createElement("form");
+            formularioNuevoComentario.className = "formulario-comentario";
 
-                </div>
+            const etiquetaNombre = document.createElement("label");
+            etiquetaNombre.className = "campo-comentario";
+            etiquetaNombre.appendChild(document.createTextNode("Nombre"));
+            const inputNombre = document.createElement("input");
+            inputNombre.type = "text";
+            inputNombre.className = "comentario-nombre";
+            inputNombre.placeholder = "Tu nombre";
+            inputNombre.maxLength = 60;
+            inputNombre.autocomplete = "name";
+            inputNombre.required = true;
+            etiquetaNombre.appendChild(inputNombre);
 
+            const etiquetaComentario = document.createElement("label");
+            etiquetaComentario.className = "campo-comentario";
+            etiquetaComentario.appendChild(document.createTextNode("Comentario"));
+            const textareaComentario = document.createElement("textarea");
+            textareaComentario.className = "comentario-texto";
+            textareaComentario.placeholder = "Escribe tu comentario";
+            textareaComentario.maxLength = 500;
+            textareaComentario.rows = 3;
+            textareaComentario.required = true;
+            etiquetaComentario.appendChild(textareaComentario);
 
-                <div
-                    class="comentarios-trabajo"
-                    style="display: none;"
-                >
+            const botonPublicarNuevo = document.createElement("button");
+            botonPublicarNuevo.type = "submit";
+            botonPublicarNuevo.className = "proyecto-boton comentario-publicar";
+            const iconoPublicar = document.createElement("i");
+            iconoPublicar.setAttribute("data-lucide", "send");
+            botonPublicarNuevo.append(iconoPublicar, document.createTextNode(" Publicar comentario"));
+            formularioNuevoComentario.append(etiquetaNombre, etiquetaComentario, botonPublicarNuevo);
 
-                    <h4>💬 Comentarios de este trabajo</h4>
+            const listaComentariosDOM = document.createElement("div");
+            listaComentariosDOM.className = "lista-comentarios";
+            comentariosTrabajoNuevo.append(tituloComentarios, formularioNuevoComentario, listaComentariosDOM);
 
-                    <form class="formulario-comentario">
-                        <input type="text" class="comentario-nombre" placeholder="Tu nombre" maxlength="60" required>
-                        <textarea class="comentario-texto" placeholder="Escribe tu comentario" maxlength="500" rows="3" required></textarea>
-                        <button type="submit" class="proyecto-boton comentario-publicar">
-                            <i data-lucide="send"></i>
-                            Publicar comentario
-                        </button>
-                    </form>
-
-                    <div class="lista-comentarios"></div>
-
-                </div>
-            `;
+            tarjetaTrabajo.append(iconoTrabajo, informacionTrabajo, accionesTrabajo, comentariosTrabajoNuevo);
 
 
             trabajosSemana.appendChild(tarjetaTrabajo);
@@ -1579,8 +1820,6 @@ function inicializarSistemaSemanas() {
                 });
             }
 
-            mostrarComentarios();
-
             formularioComentario.addEventListener("submit", async (evento) => {
                 evento.preventDefault();
 
@@ -1638,8 +1877,9 @@ function inicializarSistemaSemanas() {
 
                     botonComentar.innerHTML = `
                         <i data-lucide="message-circle-off"></i>
-                        Ocultar comentarios
+                        Ocultar
                     `;
+                    botonComentar.setAttribute("aria-label", "Ocultar comentarios");
 
                     inicializarIconosLucide();
 
@@ -1652,6 +1892,7 @@ function inicializarSistemaSemanas() {
                         <i data-lucide="message-circle"></i>
                         Comentar
                     `;
+                    botonComentar.setAttribute("aria-label", "Comentar");
 
 
                     inicializarIconosLucide();
@@ -1677,4 +1918,21 @@ function inicializarSistemaSemanas() {
     });
 
     cargarSemanasIniciales();
+
+    vistaEscritorio.addEventListener("change", (evento) => {
+        const nuevoLimite = evento.matches ? semanaFinal : semanaInicial;
+
+        if (nuevoLimite > semanasMostradas) {
+            for (let i = semanasMostradas + 1; i <= nuevoLimite; i++) {
+                crearSemana(i);
+            }
+        } else if (nuevoLimite < semanasMostradas) {
+            contenedorSemanas.querySelectorAll(".tarjeta-semana").forEach((tarjeta) => {
+                if (Number(tarjeta.dataset.semana) > nuevoLimite) tarjeta.remove();
+            });
+        }
+
+        semanasMostradas = nuevoLimite;
+        actualizarBotones();
+    });
 }
